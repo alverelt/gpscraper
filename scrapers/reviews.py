@@ -5,6 +5,7 @@ import time
 
 from bs4 import BeautifulSoup
 from datetime import datetime
+from .app import GPApp
 
 from ..helpers import list_get
 
@@ -13,57 +14,10 @@ class GPReviews:
     TIMEOUT = 30
 
     @classmethod
-    def _do_get_reviews(
-        cls, id, hl='es', gl='US', *args, **kwargs
+    def _do_post_next_reviews(
+        cls, id, next_page_form, hl='es', *args, **kwargs
     ):
-        """Get portion of all reviews.
-
-        Parameters
-        ----------
-        id : str
-            Url parameter (Application identification).
-        hl : str
-            Url parameter.
-        gl : str
-            Url parameter.
-        show_all_reviews : str
-            Url parameter.
-        **kwargs:
-            Optional params for _next_page_form method.
-
-        Returns
-        -------
-        tuple -> (list, dict | None)
-            [0] List of current response reviews.
-            [1] Required info for pagination.
-        """
-        url = 'https://play.google.com/store/apps/details'
-        params = {
-            'id': id,
-            'hl': hl,
-            'gl': gl,
-            'showAllReviews': True
-        }
-        headers = {
-            'Host': 'play.google.com',
-            'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-        }
-
-        response = requests.get(
-            url, params=params, headers=headers, timeout=cls.TIMEOUT
-        )
-        reviews, next_page_token = cls._parse_from_get(response.text)
-
-        return (reviews, cls._next_page_form(id, next_page_token, **kwargs))
-
-    @classmethod
-    def _do_post_reviews(cls, id, next_page_form, hl='es', *args, **kwargs):
-        """Get portion of all reviews.
+        """Paginates the next reviewss.
 
         Parameters
         ----------
@@ -100,16 +54,9 @@ class GPReviews:
             'TE': 'Trailers',
         }
 
-        response = requests.post(
+        return requests.post(
             url, params=params, headers=headers, data=next_page_form,
             timeout=cls.TIMEOUT
-        )
-        reviews, next_page_token = cls._parse_from_post(response.text)
-
-        review_size = kwargs.pop('review_size', None)
-        return (
-            reviews,
-            cls._next_page_form(id, next_page_token, review_size=review_size)
         )
 
     @classmethod
@@ -123,23 +70,32 @@ class GPReviews:
         pagination_delay : int | float
             Time between each scrape.
         **kwargs:
-            Optional params for _do_get_reviews, _do_post_reviews
-            and _next_page_form methods.
+            Optional params for app.GPApp._do_get_details,
+            _do_post_next_reviews and _next_page_form methods.
 
         Yields
         ------
         list of dict
         """
         try:
-            reviews, next_page_form = cls._do_get_reviews(id, *args, **kwargs)
+            response = GPApp._do_get_details(id, *args, **kwargs)
+            reviews, next_page_token = cls._parse_first_page(response.text)
+            next_page_form = cls._next_page_form(id, next_page_token, **kwargs)
+
             yield reviews
 
             if next_page_form:
                 finished = False
+                review_size = kwargs.pop('review_size', None)
                 while not finished:
                     time.sleep(pagination_delay)
-                    reviews, next_page_form = cls._do_post_reviews(
+                    response = cls._do_post_next_reviews(
                         id, next_page_form, *args, **kwargs
+                    )
+
+                    reviews, next_page_token = cls._parse_next_page(response.text)
+                    next_page_form = cls._next_page_form(
+                        id, next_page_token, review_size=review_size
                     )
 
                     yield reviews
@@ -183,7 +139,7 @@ class GPReviews:
         return reviews, next_page_token
 
     @classmethod
-    def _parse_from_get(cls, response):
+    def _parse_first_page(cls, response):
         try:
             soup = BeautifulSoup(response, 'lxml')
         except:
@@ -204,7 +160,7 @@ class GPReviews:
         return cls._parse(data)
 
     @classmethod
-    def _parse_from_post(cls, response):
+    def _parse_next_page(cls, response):
         regex = re.compile(r"\[")
         init = regex.search(response).start()
 
