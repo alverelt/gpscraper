@@ -15,7 +15,7 @@ optional = {
 	'pagination_delay': 0,
 	'review_size': 100
 }
-reviews = [e for r in gpr.scrape('com.github.android', **optional)]
+reviews = [r for r in gpr.scrape('com.github.android', **optional)]
 ```
 
 ## TODO
