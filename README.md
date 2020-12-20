@@ -19,5 +19,6 @@ reviews = [e for r in gpr.scrape('com.github.android', **optional)]
 ```
 
 ## TODO
-[ ] App scraper.
-[ ] Scrape by sorting type.
+- App scraper.
+
+- Scrape by sorting type.
