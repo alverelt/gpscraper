@@ -52,10 +52,9 @@ class GPReviews:
             'Connection': 'keep-alive',
             'TE': 'Trailers',
         }
-
         return requests.post(
             url, params=params, headers=headers, data=next_page_form,
-            timeout=cls.TIMEOUT
+            timeout=cls.TIMEOUT, *args, **kwargs
         )
 
     @classmethod
