@@ -31,9 +31,7 @@ class GPReviews:
 
         Returns
         -------
-        tuple -> (list, dict | None)
-            [0] list of current response reviews.
-            [1] info required for next page.
+        requests.Response (object)
         """
         url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
         params = {
