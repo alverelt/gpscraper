@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import requests
 import time
@@ -10,6 +11,8 @@ from .app import GPApp
 
 from ..helpers import list_get
 
+
+FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 class GPReviews:
     TIMEOUT = 30
@@ -75,6 +78,7 @@ class GPReviews:
         ------
         list of dict
         """
+        kwargs['proxies'] = cls.load_proxy()
         page = 1
         try:
             print(f'Page {page}', end='')
@@ -176,7 +180,8 @@ class GPReviews:
 
     @staticmethod
     def _next_page_form(
-        package_name, next_page_token, sort_type=None, review_size=100
+        package_name, next_page_token, sort_type=None, review_size=100,
+        *args, **kwargs
     ):
         if not next_page_token:
             return None
@@ -203,3 +208,22 @@ class GPReviews:
 
         form['f.req'] = json.dumps(form['f.req'], separators=(',', ':'))
         return form
+
+    @staticmethod
+    def load_proxy(proxies_list_path=''):
+        '''Carga proxies http.'''
+        import random
+        if not proxies_list_path:
+            proxies_dir = os.path.dirname(FILE_DIR)
+            proxies_list_path = os.path.join(proxies_dir, 'HTTP-proxies.txt')
+
+        try:
+            with open(proxies_list_path) as f:
+                proxies_list = f.readlines()
+        except:
+            proxies_list = []
+
+        if not proxies_list:
+            return {}
+
+        return {'http': random.choice(proxies_list).strip()}
