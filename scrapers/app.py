@@ -49,15 +49,11 @@ class GPApp:
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
         }
-        print('_do_get')
 
         return requests.get(
             url, params=params, headers=headers, timeout=cls.TIMEOUT,
             *args, **kwargs
         )
-        # reviews, next_page_token = cls._parse_from_get(response.text)
-
-        # return (reviews, cls._next_page_form(id, next_page_token, **kwargs))
 
     @classmethod
     def _parse(cls, response):

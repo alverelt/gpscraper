@@ -2,6 +2,7 @@ import json
 import re
 import requests
 import time
+import traceback
 
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -77,10 +78,13 @@ class GPReviews:
         ------
         list of dict
         """
+        page = 1
         try:
+            print(f'Page {page}', end='')
             response = GPApp._do_get_details(id, *args, **kwargs)
             reviews, next_page_token = cls._parse_first_page(response.text)
             next_page_form = cls._next_page_form(id, next_page_token, **kwargs)
+            print(f', Gathered {len(reviews)}')
 
             yield reviews
 
@@ -88,7 +92,9 @@ class GPReviews:
                 finished = False
                 review_size = kwargs.pop('review_size', None)
                 while not finished:
+                    page += 1
                     time.sleep(pagination_delay)
+                    print(f'Page {page}', end='')
                     response = cls._do_post_next_reviews(
                         id, next_page_form, *args, **kwargs
                     )
@@ -97,11 +103,13 @@ class GPReviews:
                     next_page_form = cls._next_page_form(
                         id, next_page_token, review_size=review_size
                     )
+                    print(f', Gathered {len(reviews)}')
 
                     yield reviews
 
                     finished = not bool(next_page_form)
         except:
+            print(traceback.format_exc(chain=False))
             print('Unexpected end.')
             pass
         finally:
@@ -123,7 +131,7 @@ class GPReviews:
                 review['version'] = list_get(d, [10])
                 review['epoch'] = list_get(d, [5, 0])
 
-                review['datetime'] = datetime.utcfromtimestamp(review['epoch'])
+                review['datetime'] = datetime.fromtimestamp(review['epoch'])
                 review['datetime'] = review['datetime'].strftime('%Y-%m-%d %H:%M:%S')
 
                 review['profile_pic'] = list_get(d, [1, 1, 3, 2])
@@ -171,12 +179,12 @@ class GPReviews:
 
     @staticmethod
     def _next_page_form(
-        package_name, next_page_token, sort_type=None, review_size=40
+        package_name, next_page_token, sort_type=None, review_size=100
     ):
         if not next_page_token:
             return None
 
-        review_size = review_size or 40
+        review_size = review_size or 100
 
         # This should remain None, its implementation is not done yet.
         sort_type = None
