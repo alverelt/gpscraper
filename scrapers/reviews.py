@@ -21,7 +21,7 @@ class GPReviews:
     def _do_post_next_reviews(
         cls, id, next_page_form, hl='es', *args, **kwargs
     ):
-        """Paginates the next reviewss.
+        """Paginates the next reviews.
 
         Parameters
         ----------

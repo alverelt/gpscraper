@@ -57,10 +57,16 @@ class GPApp:
 
     @classmethod
     def _parse(cls, response):
-    	return {}
+        soup = BeautifulSoup(response, 'html.parser')
+        parsed = {}
+
+        soup_title = soup.find('title', {'id': 'main-title'})
+        parsed['title'] = soup_title.decode_contents() if soup_title else None
+
+        return {}
 
     @classmethod
     def scrape(cls, id, *args, **kwargs):
-    	response = cls._do_get_details(id, *args, **kwargs)
-    	return cls._parse(response.text)
+        response = cls._do_get_details(id, *args, **kwargs)
+        return cls._parse(response.text)
 

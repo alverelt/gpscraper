@@ -1,2 +1,1 @@
-# from .main import GooglePlay
-from .scrapers.reviews import GPReviews
+from .gpscraper import GPScraper
