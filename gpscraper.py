@@ -1,28 +1,20 @@
 from bs4 import BeautifulSoup
-from datetime import datetime
-from .helpers import list_get, load_proxy
+from .helpers import list_get
 from . import headers
 from . import parsers
 from . import validations
 
 import json
-import os
-import re
 import requests
 import time
 import traceback
 
 
-FILE_DIR = os.path.dirname(os.path.realpath(__file__))
-
 class GPScraper:
     TIMEOUT = 30
     DEFAULT_REVIEW_SIZE = 40
 
-    def __init__(
-        self, lang='', review_size=DEFAULT_REVIEW_SIZE, sort_type=None, 
-        *args, **kwargs
-    ):
+    def __init__(self, lang='', *args, **kwargs):
         self.lang = lang
         self.load_headers(headers.GET, headers.POST)
 
@@ -55,8 +47,8 @@ class GPScraper:
             timeout=self.TIMEOUT, *args, **kwargs
         )
 
-    def app_details(self, *args, **kwargs):
-        response = self._do_get_app_details(*args, **kwargs)
+    def app_details(self, id, *args, **kwargs):
+        response = self._do_get_app_details(id, *args, **kwargs)
         return parsers.parse_app_details(response.text)
 
     def _do_post_next_reviews(self, next_page_form, *args, **kwargs):
@@ -81,9 +73,12 @@ class GPScraper:
             Url parameter (Application identification).
         pagination_delay : int | float
             Time between each scrape.
+        review_size : int
+            Reviews by page, except page 1.
+        sort_type : str
+            Sorting type.
         **kwargs:
-            Optional params for app.GPApp._do_get_details,
-            _do_post_next_reviews and _next_page_form methods.
+            Optional params for requests.
 
         Yields
         ------
@@ -97,14 +92,13 @@ class GPScraper:
         # headers_get or headers_post to differentiate both.
         kwargs.pop('headers', None)
 
-        # kwargs['proxies'] = load_proxy()
         page = 1
         try:
             print(f'Page {page}', end='')
             response = self._do_get_app_details(id, *args, **kwargs)
             reviews, token = parsers.parse_first_page(response.text)
 
-            next_page_form = self._next_page_form(
+            next_page_form = self._prepare_form_next_page(
                 id, token, review_size, sort_type
             )
             print(f', Gathered {len(reviews)}')
@@ -123,7 +117,7 @@ class GPScraper:
                     reviews, token = parsers.parse_next_page(
                         response.text
                     )
-                    next_page_form = self._next_page_form(
+                    next_page_form = self._prepare_form_next_page(
                         id, token, review_size, sort_type
                     )
                     print(f', Gathered {len(reviews)}')
@@ -138,7 +132,7 @@ class GPScraper:
         finally:
             print('End of scrape, if your list is empty, please try again.')
 
-    def _next_page_form(self, id, next_page_token, review_size, sort_type):
+    def _prepare_form_next_page(self, id, next_page_token, review_size, sort_type):
         if not next_page_token:
             return None
 

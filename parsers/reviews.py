@@ -12,6 +12,7 @@ def parse_reviews(data):
         try:
             review = {}
 
+            review['id'] = list_get(d, [0])
             review['score'] = list_get(d, [2])
             review['name'] = list_get(d, [1, 0])
             review['comment'] = list_get(d, [4])
