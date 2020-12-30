@@ -1,12 +1,13 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
+from .general import html_script as parse_html_script
 from ..helpers import list_get
 
 import json
 import re
 
 
-def parse_reviews(data):
+def reviews(data):
     reviews = []
     for d in data[0]:
         try:
@@ -33,7 +34,7 @@ def parse_reviews(data):
 
     return reviews
 
-def parse_first_page(response):
+def reviews_first_page(response):
     try:
         soup = BeautifulSoup(response, 'lxml')
     except:
@@ -41,27 +42,21 @@ def parse_first_page(response):
 
     script = soup.find_all('script')[-3]
     text = script.decode_contents()
-
-    # Beware of spaces, note that between isError and false, exist 2 spaces
-    regex = re.compile(r"key: 'ds:\d\d', isError:  false , hash: '\d\d', data:")
-    init = regex.search(text).end()
-    regex = re.compile(r", sideChannel: \{\}\}\);")
-    end = regex.search(text).start() - 1
-    data = json.loads(text[init:end])
-    reviews = parse_reviews(data)
+    data = parse_html_script(text)
+    _reviews = reviews(data)
 
     next_page_token = list_get(data, [1, 1])
 
-    return reviews, next_page_token
+    return _reviews, next_page_token
 
-def parse_next_page(response):
+def reviews_next_page(response):
     regex = re.compile(r"\[")
     init = regex.search(response).start()
 
     data = json.loads(response[init:])
     data = json.loads(data[0][2])
-    reviews = parse_reviews(data)
+    _reviews = reviews(data)
 
     next_page_token = list_get(data, [1, 1])
 
-    return reviews, next_page_token 
+    return _reviews, next_page_token
