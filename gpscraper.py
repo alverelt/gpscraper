@@ -64,7 +64,7 @@ class GPScraper:
 
     def reviews(
         self, id, pagination_delay=1, review_size=DEFAULT_REVIEW_SIZE,
-        sort_type=None, *args, **kwargs
+        sort_type=forms.Sort.MOST_RELEVANT, sort_score=None, *args, **kwargs
     ):
         """Generator, gets all reviews.
 
@@ -78,6 +78,8 @@ class GPScraper:
             Reviews by page, except page 1.
         sort_type : str
             Sorting type.
+        sort_score : int | None
+            Sort by number of score.
         **kwargs:
             Optional params for requests.
 
@@ -99,10 +101,14 @@ class GPScraper:
             response = self._do_get_app_details(id, *args, **kwargs)
             reviews, token = parsers.reviews_first_page(response.text)
 
-            yield reviews
+            # If either sort_type or sort_score has value, we must skip this
+            # because by default, Google shows "Most relevant" and
+            # "All ratings" reviews.
+            if not sort_type and not sort_score:
+                yield reviews
 
             form_next_page = forms.reviews_next_page(
-                id, token, review_size, sort_type
+                id, token, review_size, sort_type, sort_score
             )
 
             if form_next_page:
@@ -119,7 +125,7 @@ class GPScraper:
                         response.text
                     )
                     form_next_page = forms.reviews_next_page(
-                        id, token, review_size, sort_type
+                        id, token, review_size, sort_type, sort_score
                     )
 
                     yield reviews

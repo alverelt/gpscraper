@@ -23,7 +23,7 @@ def app_details(response):
         parsed['description'] = parsed['description'].replace('<br>', '\n')
 
     parsed['screenshots'] = []
-    for ss in list_get(data, [12, 0]):
+    for ss in list_get(data, [12, 0]) or []:
         parsed['screenshots'].append(ss[3][2])
 
     parsed['icon'] = list_get(data, [12, 1, 3, 2])

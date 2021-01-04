@@ -1,17 +1,29 @@
 import json
 
 
-def reviews_next_page(id, next_page_token, review_size, sort_type):
+class Sort:
+    MOST_RELEVANT = None
+    NEWEST = 2
+    RATING = 3
+
+
+def reviews_next_page(id, next_page_token, review_size, sort_type, sort_score):
     if not next_page_token:
         return None
 
-    # This should remain None, its implementation is not done yet.
-    sort_type = None
-    sort_type = json.dumps(sort_type)
+    if sort_type in [Sort.MOST_RELEVANT, Sort.NEWEST, Sort.RATING]:
+        sort_type = json.dumps(sort_type)
+    else:
+        sort_type = json.dumps(None)
+
+    if isinstance(sort_score, int) and 1 <= sort_score <= 5:
+        sort_score = f'[null,{sort_score}]'
+    else:
+        sort_score = '[]'
 
     long_data = (
         f'[null,null,[2,{sort_type},[{review_size},null,'
-        f'"{next_page_token}"],null,[]],["{id}",7]]'
+        f'"{next_page_token}"],null,{sort_score}],["{id}",7]]'
     )
 
     form = {
