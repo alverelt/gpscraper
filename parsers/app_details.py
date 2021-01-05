@@ -46,7 +46,7 @@ def app_details(response):
     data = parse_html_script(text)
 
     parsed['rating_value'] = list_get(data, [0, 6, 0])
-    parsed['rating_stars'] = {
+    parsed['histogram'] = {
         '1': list_get(data, [0, 6, 1, 1, 1]),
         '2': list_get(data, [0, 6, 1, 2, 1]),
         '3': list_get(data, [0, 6, 1, 3, 1]),

@@ -14,7 +14,7 @@ def reviews_next_page(id, next_page_token, review_size, sort_type, sort_score):
     if sort_type in [Sort.MOST_RELEVANT, Sort.NEWEST, Sort.RATING]:
         sort_type = json.dumps(sort_type)
     else:
-        sort_type = json.dumps(None)
+        sort_type = json.dumps(Sort.MOST_RELEVANT)
 
     if isinstance(sort_score, int) and 1 <= sort_score <= 5:
         sort_score = f'[null,{sort_score}]'

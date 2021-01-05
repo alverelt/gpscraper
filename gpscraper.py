@@ -25,9 +25,6 @@ class GPScraper:
 
     @lang.setter
     def lang(self, value):
-        if value != getattr(self, '_lang', ''):
-            self.cache_app_details = None
-
         validations.lang(value)
         self._lang = value
 
@@ -37,7 +34,7 @@ class GPScraper:
         if headers_post is not None:
             self.headers_post = headers_post
 
-    def _do_get_app_details(self, id, *args, **kwargs):
+    def _do_get_app_details(self, id):
         url = 'https://play.google.com/store/apps/details'
         params = {
             'id': id, 'hl': self.lang,
@@ -45,26 +42,26 @@ class GPScraper:
         }
         return requests.get(
             url, params=params, headers=self.headers_get,
-            timeout=self.TIMEOUT, *args, **kwargs
+            timeout=self.TIMEOUT
         )
 
-    def app_details(self, id, *args, **kwargs):
-        response = self._do_get_app_details(id, *args, **kwargs)
+    def app_details(self, id):
+        response = self._do_get_app_details(id)
         return parsers.app_details(response.text)
 
-    def _do_post_next_reviews(self, next_page_form, *args, **kwargs):
+    def _do_post_next_reviews(self, next_page_form):
         url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
         params = {
             'hl': self.lang
         }
         return requests.post(
             url, params=params, headers=self.headers_post, data=next_page_form,
-            timeout=self.TIMEOUT, *args, **kwargs
+            timeout=self.TIMEOUT
         )
 
     def reviews(
         self, id, pagination_delay=1, review_size=DEFAULT_REVIEW_SIZE,
-        sort_type=forms.Sort.MOST_RELEVANT, sort_score=None, *args, **kwargs
+        sort_type=forms.Sort.MOST_RELEVANT, sort_score=None
     ):
         """Generator, gets all reviews.
 
@@ -80,8 +77,6 @@ class GPScraper:
             Sorting type.
         sort_score : int | None
             Sort by number of score.
-        **kwargs:
-            Optional params for requests.
 
         Yields
         ------
@@ -91,14 +86,10 @@ class GPScraper:
         validations.review_size(review_size)
         validations.sort_type(sort_type)
 
-        # Headers will be removed, because it must be passed through
-        # headers_get or headers_post to differentiate both.
-        kwargs.pop('headers', None)
-
         page = 1
         try:
             print(f'Page {page}')
-            response = self._do_get_app_details(id, *args, **kwargs)
+            response = self._do_get_app_details(id)
             reviews, token = parsers.reviews_first_page(response.text)
 
             # If either sort_type or sort_score has value, we must skip this
@@ -119,7 +110,7 @@ class GPScraper:
                     time.sleep(pagination_delay)
                     print(f'Page {page}', end='')
                     response = self._do_post_next_reviews(
-                        form_next_page, *args, **kwargs
+                        form_next_page
                     )
                     reviews, token = parsers.reviews_next_page(
                         response.text
