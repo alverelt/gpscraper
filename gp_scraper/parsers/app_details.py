@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from .general import html_script as parse_html_script
-from ..helpers import list_get
+from ..utils import list_get
 
 
 def app_details(response):

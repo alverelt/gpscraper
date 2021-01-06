@@ -1,14 +1,12 @@
 from bs4 import BeautifulSoup
-from .helpers import list_get
+from .utils import list_get
 from . import headers
 from . import forms
 from . import parsers
 from . import validations
 
-import json
 import requests
 import time
-import traceback
 
 
 class GPScraper:
@@ -46,8 +44,22 @@ class GPScraper:
         )
 
     def app_details(self, id):
-        response = self._do_get_app_details(id)
-        return parsers.app_details(response.text)
+        """Useful info of the app.
+
+        Parameters
+        ----------
+        id : str
+            App id/Package name.
+
+        Returns
+        -------
+        dict | None
+        """ 
+        try:
+            response = self._do_get_app_details(id)
+            return parsers.app_details(response.text)
+        except:
+            return None
 
     def _do_post_next_reviews(self, next_page_form):
         url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
@@ -68,13 +80,13 @@ class GPScraper:
         Parameters
         ----------
         id : str
-            Url parameter (Application identification).
+            App id/Package name.
         pagination_delay : int | float
             Time between each scrape.
         review_size : int
             Reviews by page, except page 1.
         sort_type : str
-            Sorting type.
+            Sorting type. Check Sort class.
         sort_score : int | None
             Sort by number of score.
 
@@ -122,9 +134,8 @@ class GPScraper:
                     yield reviews
 
                     finished = not bool(form_next_page)
-        except:
-            print(traceback.format_exc(chain=False))
+        except Exception as e:
+            print(e)
             print('Unexpected end.')
-            pass
         finally:
-            print('End of scrape, if your list is empty, please try again.')
+            print('End of scrape.')
