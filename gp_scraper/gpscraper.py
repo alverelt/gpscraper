@@ -120,7 +120,7 @@ class GPScraper:
                 while not finished:
                     page += 1
                     time.sleep(pagination_delay)
-                    print(f'Page {page}', end='')
+                    print(f'Page {page}')
                     response = self._do_post_next_reviews(
                         form_next_page
                     )
