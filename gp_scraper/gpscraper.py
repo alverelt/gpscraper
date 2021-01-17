@@ -72,8 +72,12 @@ class GPScraper:
         )
 
     def reviews(
-        self, id, pagination_delay=1, review_size=DEFAULT_REVIEW_SIZE,
-        sort_type=forms.Sort.MOST_RELEVANT, sort_score=None
+        self, id, 
+        count_pages=0, 
+        pagination_delay=1, 
+        review_size=DEFAULT_REVIEW_SIZE, 
+        sort_type=forms.Sort.MOST_RELEVANT, 
+        sort_score=None
     ):
         """Generator, gets all reviews.
 
@@ -81,6 +85,8 @@ class GPScraper:
         ----------
         id : str
             App id/Package name.
+        count_pages : int
+            Number of pages to scrape, if count_pages == 0, scrapes all pages.
         pagination_delay : int | float
             Time between each scrape.
         review_size : int
@@ -90,17 +96,32 @@ class GPScraper:
         sort_score : int | None
             Sort by number of score.
 
+        Notes
+        -----
+            If either review_size, sort_type or sort_score are invalid,
+        default values will be used.
+
+        +-------------+---------------+
+        | VARIABLE    | DEFAULTS TO   |       
+        +-------------+---------------+
+        | review_size | 40            |
+        | sort_type   | MOST_RELEVANT |
+        | sort_score  | ALL SCORES    |
+        +-------------+---------------+
+        
         Yields
         ------
         list of dict
+
+        Raises
+        ------
+        (TypeError | ValueError) when invalid id.
+        
         """
         validations.id(id)
-        validations.review_size(review_size)
-        validations.sort_type(sort_type)
 
         page = 1
         try:
-            print(f'Page {page}')
             response = self._do_get_app_details(id)
             reviews, token = parsers.reviews_first_page(response.text)
 
@@ -117,10 +138,9 @@ class GPScraper:
             if form_next_page:
                 finished = False
 
-                while not finished:
+                while count_pages > 0 and page < count_pages and not finished:
                     page += 1
                     time.sleep(pagination_delay)
-                    print(f'Page {page}')
                     response = self._do_post_next_reviews(
                         form_next_page
                     )

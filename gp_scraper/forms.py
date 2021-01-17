@@ -11,14 +11,20 @@ def reviews_next_page(id, next_page_token, review_size, sort_type, sort_score):
     if not next_page_token:
         return None
 
+    if not isinstance(review_size, int) or review_size < 1:
+        # This is the default number Google Play uses.
+        review_size = 40
+
     if sort_type in [Sort.MOST_RELEVANT, Sort.NEWEST, Sort.RATING]:
         sort_type = json.dumps(sort_type)
     else:
+        # This is the detault sorting option Google Play uses.
         sort_type = json.dumps(Sort.MOST_RELEVANT)
 
     if isinstance(sort_score, int) and 1 <= sort_score <= 5:
         sort_score = f'[null,{sort_score}]'
     else:
+        # By default, Google Play sorts by all score.
         sort_score = '[]'
 
     long_data = (
