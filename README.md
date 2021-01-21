@@ -1,12 +1,11 @@
-# gp_scraper
+# gpscraper
 
 Google Play scraper.
 
 ## Example usage.
 
 ```python
-from gp_scraper import GPScraper
-from gp_scraper import Sort
+from gpscraper import GPScraper, Sort
 
 gp = GPScraper('es')
 
@@ -17,7 +16,8 @@ details = gp.app_details('com.github.android')
 reviews = [r for r in gp.reviews('com.github.android')]
 
 #Scraping reviews example 2 (Optional args).
-optional = {	
+optional = {
+        'count_pages': 10,
 	'review_size': 100,
 	'sort_type': Sort.RATING,
 	'sort_score': 5
