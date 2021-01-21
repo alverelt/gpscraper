@@ -77,8 +77,7 @@ class GPScraper:
         pagination_delay=1, 
         review_size=DEFAULT_REVIEW_SIZE, 
         sort_type=forms.Sort.MOST_RELEVANT, 
-        sort_score=None
-    ):
+        sort_score=None):
         """Generator, gets all reviews.
 
         Parameters
@@ -101,13 +100,13 @@ class GPScraper:
             If either review_size, sort_type or sort_score are invalid,
         default values will be used.
 
-        +-------------+---------------+
-        | VARIABLE    | DEFAULTS TO   |       
-        +-------------+---------------+
-        | review_size | 40            |
-        | sort_type   | MOST_RELEVANT |
-        | sort_score  | ALL SCORES    |
-        +-------------+---------------+
+        +-------------+-------------------+
+        | VARIABLE    | DEFAULTS TO       |       
+        +-------------+-------------------+
+        | review_size | 40                |
+        | sort_type   | MOST_RELEVANT     |
+        | sort_score  | None (ALL SCORES) |
+        +-------------+-------------------+
         
         Yields
         ------
@@ -120,40 +119,37 @@ class GPScraper:
         """
         validations.id(id)
 
+        if not isinstance(count_pages, int) or count_pages < 0:
+            count_pages = 0
+
+        if (not isinstance(pagination_delay, (int, float)) 
+                or pagination_delay < 0):
+            pagination_delay = 1
+
         page = 1
         try:
-            response = self._do_get_app_details(id)
-            reviews, token = parsers.reviews_first_page(response.text)
-
-            # If either sort_type or sort_score has value, we must skip this
-            # because by default, Google shows "Most relevant" and
-            # "All ratings" reviews.
             if not sort_type and not sort_score:
+                response = self._do_get_app_details(id)
+                reviews, token = parsers.reviews_first_page(response.text)
+            else:
+                form_next_page = forms.reviews_next_page(
+                    id, None, review_size, sort_type, sort_score
+                )
+                response = self._do_post_next_reviews(form_next_page)
+                reviews, token = parsers.reviews_next_page(response.text)
+
+            yield reviews
+
+            while token and (count_pages == 0 or page < count_pages):
+                form_next_page = forms.reviews_next_page(
+                    id, token, review_size, sort_type, sort_score
+                )
+                page += 1
+                time.sleep(pagination_delay)
+                response = self._do_post_next_reviews(form_next_page)
+                reviews, token = parsers.reviews_next_page(response.text)
                 yield reviews
 
-            form_next_page = forms.reviews_next_page(
-                id, token, review_size, sort_type, sort_score
-            )
-
-            if form_next_page:
-                finished = False
-
-                while count_pages > 0 and page < count_pages and not finished:
-                    page += 1
-                    time.sleep(pagination_delay)
-                    response = self._do_post_next_reviews(
-                        form_next_page
-                    )
-                    reviews, token = parsers.reviews_next_page(
-                        response.text
-                    )
-                    form_next_page = forms.reviews_next_page(
-                        id, token, review_size, sort_type, sort_score
-                    )
-
-                    yield reviews
-
-                    finished = not bool(form_next_page)
         except Exception as e:
             print(e)
             print('Unexpected end.')

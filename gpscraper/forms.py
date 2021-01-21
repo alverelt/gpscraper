@@ -8,8 +8,11 @@ class Sort:
 
 
 def reviews_next_page(id, next_page_token, review_size, sort_type, sort_score):
+    # Nota, problema cuando se usa sort type
     if not next_page_token:
-        return None
+        next_page_token = json.dumps(None)
+    else:
+        next_page_token = f'"{next_page_token}"'
 
     if not isinstance(review_size, int) or review_size < 1:
         # This is the default number Google Play uses.
@@ -29,7 +32,7 @@ def reviews_next_page(id, next_page_token, review_size, sort_type, sort_score):
 
     long_data = (
         f'[null,null,[2,{sort_type},[{review_size},null,'
-        f'"{next_page_token}"],null,{sort_score}],["{id}",7]]'
+        f'{next_page_token}],null,{sort_score}],["{id}",7]]'
     )
 
     form = {
