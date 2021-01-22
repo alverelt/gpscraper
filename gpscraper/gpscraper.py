@@ -11,7 +11,6 @@ import time
 
 class GPScraper:
     TIMEOUT = 30
-    DEFAULT_REVIEW_SIZE = 40
 
     def __init__(self, lang='', *args, **kwargs):
         self.lang = lang
@@ -54,7 +53,12 @@ class GPScraper:
         Returns
         -------
         dict | None
-        """ 
+
+        Raises
+        ------
+        InputTypeError | InputValueError
+        """
+        validations.app_details(id)
         try:
             response = self._do_get_app_details(id)
             return parsers.app_details(response.text)
@@ -72,12 +76,8 @@ class GPScraper:
         )
 
     def reviews(
-        self, id, 
-        count_pages=0, 
-        pagination_delay=1, 
-        review_size=DEFAULT_REVIEW_SIZE, 
-        sort_type=forms.Sort.MOST_RELEVANT, 
-        sort_score=None):
+        self, id, count_pages=0, pagination_delay=1, review_size=40, 
+        sort_type=forms.Sort.MOST_RELEVANT, score=0):
         """Generator, gets all reviews.
 
         Parameters
@@ -92,21 +92,8 @@ class GPScraper:
             Reviews by page, except page 1.
         sort_type : str
             Sorting type. Check Sort class.
-        sort_score : int | None
-            Sort by number of score.
-
-        Notes
-        -----
-            If either review_size, sort_type or sort_score are invalid,
-        default values will be used.
-
-        +-------------+-------------------+
-        | VARIABLE    | DEFAULTS TO       |       
-        +-------------+-------------------+
-        | review_size | 40                |
-        | sort_type   | MOST_RELEVANT     |
-        | sort_score  | None (ALL SCORES) |
-        +-------------+-------------------+
+        score : int
+            Shows reviews by score. Zero (0) means all scores. 
         
         Yields
         ------
@@ -114,41 +101,34 @@ class GPScraper:
 
         Raises
         ------
-        (TypeError | ValueError) when invalid id.
+        InputTypeError | InputValueError
         
         """
-        validations.id(id)
-
-        if not isinstance(count_pages, int) or count_pages < 0:
-            count_pages = 0
-
-        if (not isinstance(pagination_delay, (int, float)) 
-                or pagination_delay < 0):
-            pagination_delay = 1
-
-        page = 1
+        validations.reviews(
+            id, count_pages, pagination_delay, review_size,
+            sort_type, score
+        )
+       
         try:
-            if not sort_type and not sort_score:
-                response = self._do_get_app_details(id)
-                reviews, token = parsers.reviews_first_page(response.text)
-            else:
-                form_next_page = forms.reviews_next_page(
-                    id, None, review_size, sort_type, sort_score
-                )
-                response = self._do_post_next_reviews(form_next_page)
-                reviews, token = parsers.reviews_next_page(response.text)
-
-            yield reviews
-
-            while token and (count_pages == 0 or page < count_pages):
-                form_next_page = forms.reviews_next_page(
-                    id, token, review_size, sort_type, sort_score
-                )
+            page = 1
+            token = 1
+            while token and (count_pages == 0 or page <= count_pages):
+                # The only time we do a GET request to first page is
+                # when sort_type and score are default values.
+                if page == 1 and not sort_type and not score:
+                    response = self._do_get_app_details(id)
+                    reviews, token = parsers.reviews_first_page(response.text)
+                else:
+                    form_next_page = forms.reviews_next_page(
+                        id, None, review_size, sort_type, score
+                    )
+                    response = self._do_post_next_reviews(form_next_page)
+                    reviews, token = parsers.reviews_next_page(response.text)
+                
+                yield reviews
+                
                 page += 1
                 time.sleep(pagination_delay)
-                response = self._do_post_next_reviews(form_next_page)
-                reviews, token = parsers.reviews_next_page(response.text)
-                yield reviews
 
         except Exception as e:
             print(e)
