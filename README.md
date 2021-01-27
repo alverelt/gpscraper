@@ -16,7 +16,7 @@ details = gp.app_details('com.github.android')
 reviews = [r for r in gp.reviews('com.github.android')]
 
 #Scraping reviews example 2 (Optional args).
-optional = {
+options = {
 	'id': 'com.github.android',
         'count_pages': 10,
 	'review_size': 100,
