@@ -9,3 +9,7 @@ def html_script(text):
     regex = re.compile(r",\s*sideChannel:\s*\{\}\}\);")
     end = regex.search(text).start() - 1
     return json.loads(text[init:end])
+
+
+def get_ds(id, text):
+	return re.findall(r"'(ds:\d+)' : {id:'" + id + "'", text)[-1]

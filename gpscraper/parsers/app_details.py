@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from .general import html_script as parse_html_script
+from .general import get_ds
 from ..utils import list_get
 
 
@@ -9,8 +10,11 @@ def app_details(response):
     except:
         soup = BeautifulSoup(response, 'html.parser')
 
-    script = soup.find_all('script')[22]
-    text = script.decode_contents()
+    ds = get_ds('jLZZ2e', response)
+    for script in soup.find_all('script'):
+        if ds in script.decode_contents():
+            text = script.decode_contents()
+
     data = parse_html_script(text)
     data = data[0]
 
@@ -41,8 +45,11 @@ def app_details(response):
     parsed['category'] = list_get(data, [12, 13, 0, 2])
     parsed['released'] = list_get(data, [12, 36])
 
-    script = soup.find_all('script')[23]
-    text = script.decode_contents()
+    ds = get_ds('MLWfjd', response)
+    for script in soup.find_all('script'):
+        if ds in script.decode_contents():
+            text = script.decode_contents()
+
     data = parse_html_script(text)
 
     parsed['rating_value'] = list_get(data, [0, 6, 0])
