@@ -31,19 +31,38 @@ def app_details(response):
         parsed['screenshots'].append(ss[3][2])
 
     parsed['icon'] = list_get(data, [12, 1, 3, 2])
-    parsed['developer'] = list_get(data, [12, 5, 1])
-    parsed['mailto'] = list_get(data, [12, 5, 2])
-    parsed['developer_site'] = list_get(data, [12, 5, 3, 5, 2])
-    parsed['developer_apps'] = list_get(data, [12, 5, 5, 4, 2])
+
+    parsed['additional_info'] = {
+        'offered_by': list_get(data, [12, 5, 1]),
+        'developer': {
+            'site': list_get(data, [12, 5, 3, 5, 2]),
+            'mailto': list_get(data, [12, 5, 2, 0]),
+            'more_apps': list_get(data, [12, 5, 5, 4, 2]),
+            'privacy_policy': list_get(data, [12, 7, 2]),
+            'address': list_get(data, [12, 5, 4, 0])
+        },
+        'installs': list_get(data, [12, 9]),
+        'content_rating': [
+            list_get(data, [12, 4, 0]),
+            list_get(data, [12, 4, 2, 1])
+        ],
+        'interactive_elements': list_get(data, [12, 4, 3, 1]),
+        'in_app_products': list_get(data, [12, 12, 0])
+    }
+
+    parsed['editors_choice'] = bool(list_get(data, [12, 15, 0]))
 
     parsed['whats_new'] = list_get(data, [12, 6, 1])
     if parsed['whats_new'] is not None:
         parsed['whats_new'] = parsed['whats_new'].replace('<br>', '\n')
 
-    parsed['docs'] = list_get(data, [12, 7, 2])
-    parsed['downloads'] = list_get(data, [12, 9])
     parsed['category'] = list_get(data, [12, 13, 0, 2])
     parsed['released'] = list_get(data, [12, 36])
+
+    parsed['esrb'] = {
+        'description': list_get(data, [12, 4, 0]),
+        'icon': list_get(data, [12, 4, 7, 3, 2])
+    }
 
     ds = get_ds('MLWfjd', response)
     for script in soup.find_all('script'):
