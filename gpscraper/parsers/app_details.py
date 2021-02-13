@@ -42,13 +42,14 @@ def app_details(response):
             'address': list_get(data, [12, 5, 4, 0])
         },
         'installs': list_get(data, [12, 9]),
-        'content_rating': [
-            list_get(data, [12, 4, 0]),
-            list_get(data, [12, 4, 2, 1])
-        ],
+        'content_rating': [list_get(data, [12, 4, 0])],
         'interactive_elements': list_get(data, [12, 4, 3, 1]),
         'in_app_products': list_get(data, [12, 12, 0])
     }
+    content_rating = list_get(data, [12, 4, 2])
+    if isinstance(content_rating, list) and len(content_rating) > 1:
+        for item in content_rating[1:]:
+            parsed['additional_info']['content_rating'].append(item)
 
     parsed['editors_choice'] = bool(list_get(data, [12, 15, 0]))
 
