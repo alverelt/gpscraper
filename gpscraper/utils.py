@@ -1,3 +1,4 @@
+"""All functions functions must be common in all files."""
 import os
 import random
 

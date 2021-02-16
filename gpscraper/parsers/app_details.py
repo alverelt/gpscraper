@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from .general import html_script as parse_html_script
-from .general import get_ds
+from .general import get_ds, get_data
 from ..utils import list_get
 
 
@@ -10,28 +10,22 @@ def app_details(response):
     except:
         soup = BeautifulSoup(response, 'html.parser')
 
-    ds = get_ds('jLZZ2e', response)
-    for script in soup.find_all('script'):
-        if ds in script.decode_contents():
-            text = script.decode_contents()
-
-    data = parse_html_script(text)
-    data = data[0]
-
     parsed = {}
 
-    parsed['title'] = list_get(data, [0, 0])
+    data = get_data('jLZZ2e', response, soup)[0]
 
+    parsed['title'] = list_get(data, [0, 0])
     parsed['description'] = list_get(data, [10, 0, 1])
-    if parsed['description'] is not None:
+    try:
         parsed['description'] = parsed['description'].replace('<br>', '\n')
+    except:
+        pass
 
     parsed['screenshots'] = []
     for ss in list_get(data, [12, 0]) or []:
         parsed['screenshots'].append(ss[3][2])
 
     parsed['icon'] = list_get(data, [12, 1, 3, 2])
-
     parsed['additional_info'] = {
         'offered_by': list_get(data, [12, 5, 1]),
         'developer': {
@@ -47,30 +41,57 @@ def app_details(response):
         'in_app_products': list_get(data, [12, 12, 0])
     }
     content_rating = list_get(data, [12, 4, 2])
-    if isinstance(content_rating, list) and len(content_rating) > 1:
+    if isinstance(content_rating, list):
         for item in content_rating[1:]:
             parsed['additional_info']['content_rating'].append(item)
 
     parsed['editors_choice'] = bool(list_get(data, [12, 15, 0]))
-
     parsed['whats_new'] = list_get(data, [12, 6, 1])
-    if parsed['whats_new'] is not None:
+    try:
         parsed['whats_new'] = parsed['whats_new'].replace('<br>', '\n')
+    except:
+        pass
 
     parsed['category'] = list_get(data, [12, 13, 0, 2])
     parsed['released'] = list_get(data, [12, 36])
-
     parsed['esrb'] = {
         'description': list_get(data, [12, 4, 0]),
         'icon': list_get(data, [12, 4, 7, 3, 2])
     }
 
-    ds = get_ds('MLWfjd', response)
-    for script in soup.find_all('script'):
-        if ds in script.decode_contents():
-            text = script.decode_contents()
+    data = get_data('IoIWBc', response, soup)
 
-    data = parse_html_script(text)
+    parsed['additional_info']['app_size'] = list_get(data, [0])
+    parsed['additional_info']['current_version'] = list_get(data, [1])
+    parsed['additional_info']['requires_android'] = list_get(data, [2])
+
+    data = get_data('d5UeYe', response, soup)[0]
+
+    prices = list_get(data, [2, 0, 0, 0, 1])
+    try:
+        normal_price = {
+            'raw': prices[-1][0],
+            'currency': prices[-1][1],
+            'formatted': prices[-1][2]
+        }
+    except:
+        normal_price = None
+
+    try:
+        offer_price = {
+            'raw': prices[-2][0],
+            'currency': prices[-2][1],
+            'formatted': prices[-2][2]
+        }
+    except:
+        offer_price = None
+
+    parsed['prices'] = {
+        'normal': normal_price,
+        'offer': offer_price
+    }
+
+    data = get_data('MLWfjd', response, soup)
 
     parsed['rating_value'] = list_get(data, [0, 6, 0])
     parsed['histogram'] = {
