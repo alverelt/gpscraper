@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
-from .general import html_script as parse_html_script
-from .general import get_ds
+from .general import get_data
 from ..utils import list_get
 
 import json
@@ -41,12 +40,7 @@ def reviews_first_page(response):
     except:
         soup = BeautifulSoup(response, 'html.parser')
 
-    ds = get_ds('UsvDTd', response)
-    for script in soup.find_all('script'):
-        if ds in script.decode_contents():
-            text = script.decode_contents()
-
-    data = parse_html_script(text)
+    data = get_data('UsvDTd', response, soup)
     _reviews = reviews(data)
 
     next_page_token = list_get(data, [1, 1])

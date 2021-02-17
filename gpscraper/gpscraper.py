@@ -76,7 +76,7 @@ class GPScraper:
         )
 
     def reviews(
-        self, id, count_pages=0, pagination_delay=1, review_size=40, 
+        self, id, count_pages=0, pagination_delay=1, review_size=100, 
         sort_type=forms.Sort.MOST_RELEVANT, score=0):
         """Generator, gets all reviews.
 
@@ -120,7 +120,8 @@ class GPScraper:
                     reviews, token = parsers.reviews_first_page(response.text)
                 else:
                     form_next_page = forms.reviews_next_page(
-                        id, None, review_size, sort_type, score
+                        id, None if page == 1 else token, 
+                        review_size, sort_type, score
                     )
                     response = self._do_post_next_reviews(form_next_page)
                     reviews, token = parsers.reviews_next_page(response.text)
