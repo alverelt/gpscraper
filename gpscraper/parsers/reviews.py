@@ -21,8 +21,8 @@ def reviews(data):
             review['version'] = list_get(d, [10])
             review['epoch'] = list_get(d, [5, 0])
 
-            review['datetime'] = datetime.fromtimestamp(review['epoch'])
-            review['datetime'] = review['datetime'].strftime('%Y-%m-%d %H:%M:%S')
+            _datetime = datetime.fromtimestamp(review['epoch'])
+            review['datetime'] = _datetime.strftime('%Y-%m-%d %H:%M:%S')
 
             review['profile_pic'] = list_get(d, [1, 1, 3, 2])
             review['background_pic'] = list_get(d, [9, 4, 3, 2])
@@ -58,3 +58,28 @@ def reviews_next_page(response):
     next_page_token = list_get(data, [1, 1])
 
     return _reviews, next_page_token
+
+def review_history(response):
+    text = re.search(r'"UsvDTd","(.*)\\n",null,null', response).group(1)
+    data = json.loads(text.replace('\\n', '').replace('\\"', '"'))
+
+    histories = []
+
+    for d in data[0]:
+        history = {}
+
+        history['id'] = list_get(d, [0])
+        history['name'] = list_get(d, [1, 0])
+        history['profile_pic'] = list_get(d, [9, 3, 0, 3, 2])
+        history['background_pic'] = list_get(d, [9, 4, 3, 2])
+        history['score'] = list_get(d, [2])
+        history['comment'] = list_get(d, [4])
+        history['epoch'] = list_get(d, [5, 0])
+
+        _datetime = datetime.fromtimestamp(history['epoch'])
+        history['datetime'] = _datetime.strftime('%Y-%m-%d %H:%M:%S')
+        history['version'] = list_get(d, [10])
+
+        histories.append(history)
+
+    return histories

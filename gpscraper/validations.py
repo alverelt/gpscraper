@@ -16,20 +16,20 @@ def lang(value):
         raise ValueError('Lang cannot be empty.')
 
 
-def app_details(id):
-    if not isinstance(id, str):
-        raise InputTypeError("'id' must be of type str.")
+def app_details(app_id):
+    if not isinstance(app_id, str):
+        raise InputTypeError("'app_id' must be of type str.")
     if not id:
-        raise InputValueError("'id' cannot be empty.")
+        raise InputValueError("'app_id' cannot be empty.")
 
 
 def reviews(
-        id, count_pages, pagination_delay,
+        app_id, count_pages, pagination_delay,
         review_size, sort_type, score):
-    if not isinstance(id, str):
-        raise InputTypeError("'id' must be of type str.")
-    if not id:
-        raise InputValueError("'id' cannot be empty.")
+    if not isinstance(app_id, str):
+        raise InputTypeError("'app_id' must be of type str.")
+    if not app_id:
+        raise InputValueError("'app_id' cannot be empty.")
 
     if not isinstance(count_pages, int):
         raise InputTypeError("'count_pages' must be of type int.")
@@ -55,5 +55,13 @@ def reviews(
         raise InputValueError("'score' must be between 0 and 5.")
 
 
+def review_history(app_id, review_id):
+    if not isinstance(app_id, str):
+        raise InputTypeError("'app_id' must be of type str.")
+    if not app_id:
+        raise InputValueError("'app_id' cannot be empty.")
 
-
+    if not isinstance(review_id, str):
+        raise InputTypeError("'review_id' must be of type str.")
+    if not review_id:
+        raise InputValueError("'review_id' cannot be empty.")

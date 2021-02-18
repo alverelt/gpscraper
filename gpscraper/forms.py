@@ -11,7 +11,7 @@ class Sort:
         return value in [cls.MOST_RELEVANT, cls.NEWEST, cls.RATING]
 
 
-def reviews_next_page(id, next_page_token, review_size, sort_type, score):
+def reviews_next_page(app_id, next_page_token, review_size, sort_type, score):
     if not next_page_token:
         next_page_token = json.dumps(None)
     else:
@@ -27,7 +27,7 @@ def reviews_next_page(id, next_page_token, review_size, sort_type, score):
 
     long_data = (
         f'[null,null,[2,{sort_type},[{review_size},null,'
-        f'{next_page_token}],null,{score}],["{id}",7]]'
+        f'{next_page_token}],null,{score}],["{app_id}",7]]'
     )
 
     form = {
@@ -36,6 +36,23 @@ def reviews_next_page(id, next_page_token, review_size, sort_type, score):
             long_data,
             None,
             'generic'
+        ]]]
+    }
+
+    form['f.req'] = json.dumps(form['f.req'], separators=(',', ':'))
+    return form
+
+def review_history(app_id, review_id):
+    long_data = (
+        f'[null,null,[4,null,[40]],["{app_id}",7],"{review_id}"]'
+    )
+
+    form = {
+        'f.req': [[[
+            'UsvDTd',
+            long_data,
+            None,
+            '1'
         ]]]
     }
 

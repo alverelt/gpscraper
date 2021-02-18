@@ -31,10 +31,10 @@ class GPScraper:
         if headers_post is not None:
             self.headers_post = headers_post
 
-    def _do_get_app_details(self, id):
+    def _do_get_app_details(self, app_id):
         url = 'https://play.google.com/store/apps/details'
         params = {
-            'id': id, 'hl': self.lang,
+            'id': app_id, 'hl': self.lang,
             'gl': 'US', 'showAllReviews': True
         }
         return requests.get(
@@ -42,12 +42,12 @@ class GPScraper:
             timeout=self.TIMEOUT
         )
 
-    def app_details(self, id):
+    def app_details(self, app_id):
         """Useful info of the app.
 
         Parameters
         ----------
-        id : str
+        app_id : str
             App id/Package name.
 
         Returns
@@ -58,9 +58,9 @@ class GPScraper:
         ------
         InputTypeError | InputValueError
         """
-        validations.app_details(id)
+        validations.app_details(app_id)
         try:
-            response = self._do_get_app_details(id)
+            response = self._do_get_app_details(app_id)
             return parsers.app_details(response.text)
         except:
             return None
@@ -76,13 +76,13 @@ class GPScraper:
         )
 
     def reviews(
-        self, id, count_pages=0, pagination_delay=1, review_size=100, 
+        self, app_id, count_pages=0, pagination_delay=1, review_size=100, 
         sort_type=forms.Sort.MOST_RELEVANT, score=0):
         """Generator, gets all reviews.
 
         Parameters
         ----------
-        id : str
+        app_id : str
             App id/Package name.
         count_pages : int
             Number of pages to scrape, if count_pages == 0, scrapes all pages.
@@ -105,7 +105,7 @@ class GPScraper:
         
         """
         validations.reviews(
-            id, count_pages, pagination_delay, review_size,
+            app_id, count_pages, pagination_delay, review_size,
             sort_type, score
         )
        
@@ -116,11 +116,11 @@ class GPScraper:
                 # The only time we do a GET request to first page is
                 # when sort_type and score are default values.
                 if page == 1 and not sort_type and not score:
-                    response = self._do_get_app_details(id)
+                    response = self._do_get_app_details(app_id)
                     reviews, token = parsers.reviews_first_page(response.text)
                 else:
                     form_next_page = forms.reviews_next_page(
-                        id, None if page == 1 else token, 
+                        app_id, None if page == 1 else token, 
                         review_size, sort_type, score
                     )
                     response = self._do_post_next_reviews(form_next_page)
@@ -136,3 +136,38 @@ class GPScraper:
             print('Unexpected end.')
         finally:
             print('End of scrape.')
+
+    def _do_get_review_history(self, form):
+        url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
+
+        return requests.post(
+            url, headers=self.headers_post, data=form,
+            timeout=self.TIMEOUT
+        )
+
+    def review_history(self, app_id, review_id):
+        """Gets a review history (all modifications).
+
+        Parameters
+        ----------
+        app_id : str
+            App id/Package name.
+        review_id : int
+            Review id, it is retrieve from reviews when you use the
+            reviews method.
+        
+        Yields
+        ------
+        list of dict | None
+
+        Raises
+        ------
+        InputTypeError | InputValueError        
+        """
+        validations.review_history(app_id, review_id)
+        try:
+            form = forms.review_history(app_id, review_id)
+            response = self._do_get_review_history(form)
+            return parsers.review_history(response.text)
+        except:
+            None
