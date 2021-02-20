@@ -1,2 +1,2 @@
 from .forms import SortType
-from .gpscraper import GPScraper
+from .scrapers import app_details, reviews, review_history
