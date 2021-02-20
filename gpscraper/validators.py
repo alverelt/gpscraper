@@ -6,7 +6,7 @@ in parsing functions so we can use TypeError and ValueError to catch other
 types of errors.
 """
 from .exceptions import InputTypeError, InputValueError
-from .forms import Sort
+from .forms import SortType
 
 
 def lang(value):
@@ -46,7 +46,7 @@ def reviews(
     if review_size < 1:
         raise InputValueError("'review_size' must be greater than 0.")
 
-    if not Sort.contains(sort_type):
+    if sort_type not in SortType:
         raise InputValueError("'sort_type' value is not recognized.")
 
     if not isinstance(score, int):

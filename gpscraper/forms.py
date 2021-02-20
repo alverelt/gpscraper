@@ -1,14 +1,12 @@
+from enum import Enum
+
 import json
 
 
-class Sort:
+class SortType(Enum):
     MOST_RELEVANT = None
     NEWEST = 2
     RATING = 3
-
-    @classmethod
-    def contains(cls, value):
-        return value in [cls.MOST_RELEVANT, cls.NEWEST, cls.RATING]
 
 
 def reviews_next_page(app_id, next_page_token, review_size, sort_type, score):
@@ -17,7 +15,7 @@ def reviews_next_page(app_id, next_page_token, review_size, sort_type, score):
     else:
         next_page_token = f'"{next_page_token}"'
 
-    sort_type = json.dumps(sort_type)
+    sort_type = json.dumps(sort_type.value)
 
     if 1 <= score <= 5:
         score = f'[null,{score}]'
@@ -43,6 +41,8 @@ def reviews_next_page(app_id, next_page_token, review_size, sort_type, score):
     return form
 
 def review_history(app_id, review_id):
+    # It looks like 40 is the review_size but it doesnt matter
+    # because we wont be iterating through a long review history.
     long_data = (
         f'[null,null,[4,null,[40]],["{app_id}",7],"{review_id}"]'
     )

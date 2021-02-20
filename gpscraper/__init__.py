@@ -1,2 +1,2 @@
-from .forms import Sort
+from .forms import SortType
 from .gpscraper import GPScraper

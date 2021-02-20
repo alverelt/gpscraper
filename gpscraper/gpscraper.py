@@ -3,10 +3,18 @@ from .utils import list_get
 from . import headers
 from . import forms
 from . import parsers
-from . import validations
+from . import validators
 
+import logging
 import requests
+import requests.exceptions
 import time
+
+
+logging.basicConfig(
+    format='%(asctime)s - %(levelname)s - %(message)s', 
+    level=logging.INFO
+)
 
 
 class GPScraper:
@@ -22,7 +30,7 @@ class GPScraper:
 
     @lang.setter
     def lang(self, value):
-        validations.lang(value)
+        validators.lang(value)
         self._lang = value
 
     def load_headers(self, headers_get=None, headers_post=None):
@@ -58,7 +66,7 @@ class GPScraper:
         ------
         InputTypeError | InputValueError
         """
-        validations.app_details(app_id)
+        validators.app_details(app_id)
         try:
             response = self._do_get_app_details(app_id)
             return parsers.app_details(response.text)
@@ -77,7 +85,7 @@ class GPScraper:
 
     def reviews(
         self, app_id, count_pages=0, pagination_delay=1, review_size=100, 
-        sort_type=forms.Sort.MOST_RELEVANT, score=0):
+        sort_type=forms.SortType.MOST_RELEVANT, score=0):
         """Generator, gets all reviews.
 
         Parameters
@@ -104,7 +112,7 @@ class GPScraper:
         InputTypeError | InputValueError
         
         """
-        validations.reviews(
+        validators.reviews(
             app_id, count_pages, pagination_delay, review_size,
             sort_type, score
         )
@@ -126,16 +134,27 @@ class GPScraper:
                     response = self._do_post_next_reviews(form_next_page)
                     reviews, token = parsers.reviews_next_page(response.text)
                 
-                yield reviews
+                yield {
+                    'reviews': reviews,
+                    'continue': {
+                        'app_id': app_id,
+                        'lang': self.lang,
+                        'review_size': review_size,
+                        'sort_type': sort_type,
+                        'score': score,
+                        'token': token
+                    }
+                }
                 
                 page += 1
                 time.sleep(pagination_delay)
-
+        except GeneratorExit:
+            return
+        except requests.exceptions.RequestException as e:
+            logging.exception(e)
         except Exception as e:
-            print(e)
-            print('Unexpected end.')
-        finally:
-            print('End of scrape.')
+            logging.exception(e)
+            logging.error('Unexpected end.')
 
     def _do_get_review_history(self, form):
         url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
@@ -164,10 +183,10 @@ class GPScraper:
         ------
         InputTypeError | InputValueError        
         """
-        validations.review_history(app_id, review_id)
+        validators.review_history(app_id, review_id)
         try:
             form = forms.review_history(app_id, review_id)
             response = self._do_get_review_history(form)
             return parsers.review_history(response.text)
         except:
-            None
+            return None
