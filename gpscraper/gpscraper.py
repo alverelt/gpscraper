@@ -20,43 +20,28 @@ logging.basicConfig(
 class GPScraper:
     TIMEOUT = 30
 
-    def __init__(self, lang='', *args, **kwargs):
-        self.lang = lang
-        self.load_headers(headers.GET, headers.POST)
-
-    @property
-    def lang(self):
-        return self._lang
-
-    @lang.setter
-    def lang(self, value):
-        validators.lang(value)
-        self._lang = value
-
-    def load_headers(self, headers_get=None, headers_post=None):
-        if headers_get is not None:
-            self.headers_get = headers_get
-        if headers_post is not None:
-            self.headers_post = headers_post
-
-    def _do_get_app_details(self, app_id):
+    @classmethod
+    def _do_get_app_details(cls, app_id, lang, *args, **kwargs):
         url = 'https://play.google.com/store/apps/details'
         params = {
-            'id': app_id, 'hl': self.lang,
+            'id': app_id, 'hl': lang,
             'gl': 'US', 'showAllReviews': True
         }
         return requests.get(
-            url, params=params, headers=self.headers_get,
-            timeout=self.TIMEOUT
+            url, params=params, headers=headers.GET,
+            timeout=cls.TIMEOUT
         )
 
-    def app_details(self, app_id):
+    @classmethod
+    def app_details(cls, app_id, lang='us'):
         """Useful info of the app.
 
         Parameters
         ----------
         app_id : str
             App id/Package name.
+        lang : str
+            Language to be shown.
 
         Returns
         -------
@@ -66,42 +51,47 @@ class GPScraper:
         ------
         InputTypeError | InputValueError
         """
-        validators.app_details(app_id)
+        validators.app_details(app_id, lang)
         try:
-            response = self._do_get_app_details(app_id)
+            response = cls._do_get_app_details(app_id, lang)
             return parsers.app_details(response.text)
         except:
             return None
 
-    def _do_post_next_reviews(self, next_page_form):
+    @classmethod
+    def _do_post_next_reviews(cls, next_page_form, lang, *args, **kwargs):
         url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
         params = {
-            'hl': self.lang
+            'hl': lang
         }
         return requests.post(
-            url, params=params, headers=self.headers_post, data=next_page_form,
-            timeout=self.TIMEOUT
+            url, params=params, headers=headers.POST, data=next_page_form,
+            timeout=cls.TIMEOUT
         )
 
+    @classmethod
     def reviews(
-        self, app_id, count_pages=0, pagination_delay=1, review_size=100, 
-        sort_type=forms.SortType.MOST_RELEVANT, score=0):
+        cls, app_id, token=None, pagination_delay=1, review_size=100, 
+        sort_type=forms.SortType.MOST_RELEVANT, score=0, lang='us',
+        *args, **kwargs):
         """Generator, gets all reviews.
 
         Parameters
         ----------
         app_id : str
             App id/Package name.
-        count_pages : int
-            Number of pages to scrape, if count_pages == 0, scrapes all pages.
+        token : str | None
+            For continuation of reviews, you must provide this token.
         pagination_delay : int | float
             Time between each scrape.
         review_size : int
             Reviews by page, except page 1.
-        sort_type : str
-            Sorting type. Check Sort class.
+        sort_type : SortType
+            Sorting type. Check SortType class.
         score : int
             Shows reviews by score. Zero (0) means all scores. 
+        lang : str
+            Language of reviews.
         
         Yields
         ------
@@ -113,32 +103,31 @@ class GPScraper:
         
         """
         validators.reviews(
-            app_id, count_pages, pagination_delay, review_size,
-            sort_type, score
+            app_id, token, pagination_delay, review_size, sort_type, 
+            score, lang
         )
        
         try:
-            page = 1
-            token = 1
-            while token and (count_pages == 0 or page <= count_pages):
+            token = token or -1
+            while token:
                 # The only time we do a GET request to first page is
                 # when sort_type and score are default values.
-                if page == 1 and not sort_type and not score:
-                    response = self._do_get_app_details(app_id)
+                if token == -1 and not sort_type and not score:
+                    response = cls._do_get_app_details(app_id, lang)
                     reviews, token = parsers.reviews_first_page(response.text)
                 else:
                     form_next_page = forms.reviews_next_page(
-                        app_id, None if page == 1 else token, 
+                        app_id, None if token == -1 else token, 
                         review_size, sort_type, score
                     )
-                    response = self._do_post_next_reviews(form_next_page)
+                    response = cls._do_post_next_reviews(form_next_page, lang)
                     reviews, token = parsers.reviews_next_page(response.text)
                 
                 yield {
                     'reviews': reviews,
                     'continue': {
                         'app_id': app_id,
-                        'lang': self.lang,
+                        'lang': lang,
                         'review_size': review_size,
                         'sort_type': sort_type,
                         'score': score,
@@ -146,7 +135,6 @@ class GPScraper:
                     }
                 }
                 
-                page += 1
                 time.sleep(pagination_delay)
         except GeneratorExit:
             return
@@ -156,15 +144,17 @@ class GPScraper:
             logging.exception(e)
             logging.error('Unexpected end.')
 
-    def _do_get_review_history(self, form):
+    @classmethod
+    def _do_get_review_history(cls, form):
         url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
 
         return requests.post(
-            url, headers=self.headers_post, data=form,
-            timeout=self.TIMEOUT
+            url, headers=headers.POST, data=form,
+            timeout=cls.TIMEOUT
         )
 
-    def review_history(self, app_id, review_id):
+    @classmethod
+    def review_history(cls, app_id, review_id):
         """Gets a review history (all modifications).
 
         Parameters
@@ -186,7 +176,7 @@ class GPScraper:
         validators.review_history(app_id, review_id)
         try:
             form = forms.review_history(app_id, review_id)
-            response = self._do_get_review_history(form)
+            response = cls._do_get_review_history(form)
             return parsers.review_history(response.text)
         except:
             return None
