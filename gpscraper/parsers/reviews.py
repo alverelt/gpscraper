@@ -8,7 +8,7 @@ import re
 
 
 def reviews(data):
-    reviews = []
+    _reviews = []
     for d in data[0]:
         try:
             review = {}
@@ -28,11 +28,11 @@ def reviews(data):
             review['background_pic'] = list_get(d, [9, 4, 3, 2])
             review['likes'] = list_get(d, [6])
 
-            reviews.append(review)
+            _reviews.append(review)
         except:
             pass
 
-    return reviews
+    return _reviews
 
 def reviews_first_page(response):
     try:

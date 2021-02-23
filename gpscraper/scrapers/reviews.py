@@ -60,17 +60,17 @@ def reviews(
             # when sort_type and score are default values.
             if token == -1 and not sort_type and not score:
                 response = _do_get_app_details(app_id, lang)
-                reviews, token = parsers.reviews_first_page(response.text)
+                _reviews, token = parsers.reviews_first_page(response.text)
             else:
                 form_next_page = forms.reviews_next_page(
                     app_id, None if token == -1 else token, 
                     review_size, sort_type, score
                 )
                 response = _do_post_next_reviews(form_next_page, lang)
-                reviews, token = parsers.reviews_next_page(response.text)
+                _reviews, token = parsers.reviews_next_page(response.text)
             
             yield {
-                'reviews': reviews,
+                'reviews': _reviews,
                 'continue': {
                     'app_id': app_id,
                     'lang': lang,
@@ -132,6 +132,4 @@ def review_history(app_id, review_id):
 def _do_get_review_history(form):
     url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
 
-    return requests.post(
-        url, headers=headers.POST, data=form,
-    )
+    return requests.post(url, headers=headers.POST, data=form)
