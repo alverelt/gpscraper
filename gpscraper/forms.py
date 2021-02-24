@@ -58,3 +58,19 @@ def review_history(app_id, review_id):
 
     form['f.req'] = json.dumps(form['f.req'], separators=(',', ':'))
     return form
+
+def search_next_page(token, strange_data):
+    long_data = (
+        f'[[null,[{strange_data}],null,"{token}"]]'
+    )
+
+    form = {
+        'f.req': [[[
+            'qnKhOb',
+            long_data,
+            None,
+            'generic'
+        ]]]
+    }
+
+    return form

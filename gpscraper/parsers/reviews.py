@@ -18,7 +18,7 @@ def reviews(data):
             review['name'] = list_get(d, [1, 0])
             review['comment'] = list_get(d, [4])
             review['reply'] = list_get(d, [7, 1])
-            review['version'] = list_get(d, [10])
+            review['app_version'] = list_get(d, [10])
             review['epoch'] = list_get(d, [5, 0])
 
             _datetime = datetime.fromtimestamp(review['epoch'])
@@ -78,7 +78,7 @@ def review_history(response):
 
         _datetime = datetime.fromtimestamp(history['epoch'])
         history['datetime'] = _datetime.strftime('%Y-%m-%d %H:%M:%S')
-        history['version'] = list_get(d, [10])
+        history['app_version'] = list_get(d, [10])
 
         results.append(history)
 

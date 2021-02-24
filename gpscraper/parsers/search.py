@@ -20,7 +20,7 @@ def search(data):
                 'more_apps': list_get(d, [4, 0, 0, 1, 4, 2])
             }
             app['description'] = list_get(d, [4, 1, 1, 1, 1])
-            app['score'] = list_get(d, [6, 0, 2, 1])
+            app['rating'] = list_get(d, [6, 0, 2, 1])
             app['app_id'] = list_get(d, [12, 0])
 
             results.append(app)
@@ -39,4 +39,10 @@ def search_first_page(response):
     data = get_data('lGYRle', response, soup)
     results = search(data)
 
-    return results
+    token = list_get(data, [0, 1, 0, 0, 7, 1])
+
+    response = response.replace('\\n', '')
+    regex = re.compile(r'"QEwZ9c":"%\.@\.(.*)\]","QrtxK"')
+    strange_data = regex.search(response).group(1)
+
+    return results, token, strange_data

@@ -1,6 +1,6 @@
 from .details import _do_get_details
-from .. import headers
 from .. import forms
+from .. import headers
 from .. import parsers
 from .. import validators
 
@@ -17,8 +17,13 @@ logging.basicConfig(
 
 
 def reviews(
-    app_id, token=None, pagination_delay=1, review_size=100, 
-    sort_type=forms.SortType.MOST_RELEVANT, rating=0, lang='us',
+    app_id, 
+    token=None, 
+    pagination_delay=1, 
+    review_size=100, 
+    sort_type=forms.SortType.MOST_RELEVANT, 
+    rating=0, 
+    lang='us',
     *args, **kwargs):
     """Generator, gets all reviews.
 
@@ -60,17 +65,17 @@ def reviews(
             # when sort_type and rating are default values.
             if token == -1 and not sort_type and not rating:
                 response = _do_get_details(app_id, lang)
-                _reviews, token = parsers.reviews_first_page(response.text)
+                results, token = parsers.reviews_first_page(response.text)
             else:
                 form_next_page = forms.reviews_next_page(
                     app_id, None if token == -1 else token, 
                     review_size, sort_type, rating
                 )
                 response = _do_post_next_reviews(form_next_page, lang)
-                _reviews, token = parsers.reviews_next_page(response.text)
+                results, token = parsers.reviews_next_page(response.text)
             
             yield {
-                'reviews': _reviews,
+                'reviews': results,
                 'continue': {
                     'app_id': app_id,
                     'lang': lang,
