@@ -1,7 +1,7 @@
 from .forms import SortType
 from .scrapers import (
-    app_details, 
+    details, 
     reviews, 
     review_history,
-    search_list
+    search
 )

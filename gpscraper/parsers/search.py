@@ -7,13 +7,13 @@ import json
 import re
 
 
-def search_list(data):
-    _search_list = []
+def search(data):
+    results = []
     for d in data[0][1][0][0][0]:
         try:
             app = {}
 
-            app['app_pic'] = list_get(d, [1, 1, 1, 3, 2])
+            app['icon'] = list_get(d, [1, 1, 1, 3, 2])
             app['title'] = list_get(d, [2])
             app['offered_by'] = list_get(d, [4, 0, 0, 0])
             app['developer'] = {
@@ -23,20 +23,20 @@ def search_list(data):
             app['score'] = list_get(d, [6, 0, 2, 1])
             app['app_id'] = list_get(d, [12, 0])
 
-            _search_list.append(app)
+            results.append(app)
         except:
             pass
 
-    return _search_list
+    return results
 
 
-def search_list_first_page(response):
+def search_first_page(response):
     try:
         soup = BeautifulSoup(response, 'lxml')
     except:
         soup = BeautifulSoup(response, 'html.parser')
     
     data = get_data('lGYRle', response, soup)
-    _search_list = search_list(data)
+    results = search(data)
 
-    return _search_list
+    return results

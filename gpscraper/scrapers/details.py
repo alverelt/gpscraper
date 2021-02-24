@@ -5,7 +5,7 @@ from .. import validators
 import requests
 
 
-def app_details(app_id, lang='us'):
+def details(app_id, lang='us'):
     """Useful info of the app.
 
     Parameters
@@ -23,15 +23,15 @@ def app_details(app_id, lang='us'):
     ------
     InputTypeError | InputValueError
     """
-    validators.app_details(app_id, lang)
+    validators.details(app_id, lang)
     try:
-        response = _do_get_app_details(app_id, lang)
-        return parsers.app_details(response.text)
+        response = _do_get_details(app_id, lang)
+        return parsers.details(response.text)
     except:
         return None
 
 
-def _do_get_app_details(app_id, lang, *args, **kwargs):
+def _do_get_details(app_id, lang, *args, **kwargs):
     url = 'https://play.google.com/store/apps/details'
     params = {
         'id': app_id, 'hl': lang,

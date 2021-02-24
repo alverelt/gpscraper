@@ -8,13 +8,13 @@ import re
 
 
 def reviews(data):
-    _reviews = []
+    results = []
     for d in data[0]:
         try:
             review = {}
 
             review['id'] = list_get(d, [0])
-            review['score'] = list_get(d, [2])
+            review['rating'] = list_get(d, [2])
             review['name'] = list_get(d, [1, 0])
             review['comment'] = list_get(d, [4])
             review['reply'] = list_get(d, [7, 1])
@@ -28,11 +28,11 @@ def reviews(data):
             review['background_pic'] = list_get(d, [9, 4, 3, 2])
             review['likes'] = list_get(d, [6])
 
-            _reviews.append(review)
+            results.append(review)
         except:
             pass
 
-    return _reviews
+    return results
 
 def reviews_first_page(response):
     try:
@@ -41,11 +41,11 @@ def reviews_first_page(response):
         soup = BeautifulSoup(response, 'html.parser')
 
     data = get_data('UsvDTd', response, soup)
-    _reviews = reviews(data)
+    results = reviews(data)
 
     next_page_token = list_get(data, [1, 1])
 
-    return _reviews, next_page_token
+    return results, next_page_token
 
 def reviews_next_page(response):
     regex = re.compile(r"\[")
@@ -53,17 +53,17 @@ def reviews_next_page(response):
 
     data = json.loads(response[init:])
     data = json.loads(data[0][2])
-    _reviews = reviews(data)
+    results = reviews(data)
 
     next_page_token = list_get(data, [1, 1])
 
-    return _reviews, next_page_token
+    return results, next_page_token
 
 def review_history(response):
     text = re.search(r'"UsvDTd","(.*)\\n",null,null', response).group(1)
     data = json.loads(text.replace('\\n', '').replace('\\"', '"'))
 
-    histories = []
+    results = []
 
     for d in data[0]:
         history = {}
@@ -72,7 +72,7 @@ def review_history(response):
         history['name'] = list_get(d, [1, 0])
         history['profile_pic'] = list_get(d, [9, 3, 0, 3, 2])
         history['background_pic'] = list_get(d, [9, 4, 3, 2])
-        history['score'] = list_get(d, [2])
+        history['rating'] = list_get(d, [2])
         history['comment'] = list_get(d, [4])
         history['epoch'] = list_get(d, [5, 0])
 
@@ -80,6 +80,6 @@ def review_history(response):
         history['datetime'] = _datetime.strftime('%Y-%m-%d %H:%M:%S')
         history['version'] = list_get(d, [10])
 
-        histories.append(history)
+        results.append(history)
 
-    return histories
+    return results

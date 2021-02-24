@@ -9,7 +9,7 @@ class SortType(Enum):
     RATING = 3
 
 
-def reviews_next_page(app_id, next_page_token, review_size, sort_type, score):
+def reviews_next_page(app_id, next_page_token, review_size, sort_type, rating):
     if not next_page_token:
         next_page_token = json.dumps(None)
     else:
@@ -17,15 +17,15 @@ def reviews_next_page(app_id, next_page_token, review_size, sort_type, score):
 
     sort_type = json.dumps(sort_type.value)
 
-    if 1 <= score <= 5:
-        score = f'[null,{score}]'
+    if 1 <= rating <= 5:
+        rating = f'[null,{rating}]'
     else:
-        # By default, Google Play shows reviews of all scores.
-        score = '[]'
+        # By default, Google Play shows reviews of all ratings.
+        rating = '[]'
 
     long_data = (
         f'[null,null,[2,{sort_type},[{review_size},null,'
-        f'{next_page_token}],null,{score}],["{app_id}",7]]'
+        f'{next_page_token}],null,{rating}],["{app_id}",7]]'
     )
 
     form = {

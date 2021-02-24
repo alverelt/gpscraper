@@ -3,10 +3,10 @@ from .general import get_data
 from ..utils import list_get
 
 
-def app_details(response):
-    return _AppDetails(response).parse()
+def details(response):
+    return _Details(response).parse()
 
-class _AppDetails:
+class _Details:
     def __init__(self, response):
         self.response = response
         try:

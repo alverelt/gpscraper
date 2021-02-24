@@ -1,4 +1,4 @@
-from .app_details import _do_get_app_details
+from .details import _do_get_details
 from .. import headers
 from .. import forms
 from .. import parsers
@@ -18,7 +18,7 @@ logging.basicConfig(
 
 def reviews(
     app_id, token=None, pagination_delay=1, review_size=100, 
-    sort_type=forms.SortType.MOST_RELEVANT, score=0, lang='us',
+    sort_type=forms.SortType.MOST_RELEVANT, rating=0, lang='us',
     *args, **kwargs):
     """Generator, gets all reviews.
 
@@ -34,8 +34,8 @@ def reviews(
         Reviews by page, except page 1.
     sort_type : SortType
         Sorting type. Check SortType class.
-    score : int
-        Shows reviews by score. Zero (0) means all scores. 
+    rating : int
+        Shows reviews by rating. Zero (0) means all ratings. 
     lang : str
         Language of reviews.
     
@@ -50,21 +50,21 @@ def reviews(
     """
     validators.reviews(
         app_id, token, pagination_delay, review_size, sort_type, 
-        score, lang
+        rating, lang
     )
     
     try:
         token = token or -1
         while token:
             # The only time we do a GET request to first page is
-            # when sort_type and score are default values.
-            if token == -1 and not sort_type and not score:
-                response = _do_get_app_details(app_id, lang)
+            # when sort_type and rating are default values.
+            if token == -1 and not sort_type and not rating:
+                response = _do_get_details(app_id, lang)
                 _reviews, token = parsers.reviews_first_page(response.text)
             else:
                 form_next_page = forms.reviews_next_page(
                     app_id, None if token == -1 else token, 
-                    review_size, sort_type, score
+                    review_size, sort_type, rating
                 )
                 response = _do_post_next_reviews(form_next_page, lang)
                 _reviews, token = parsers.reviews_next_page(response.text)
@@ -76,7 +76,7 @@ def reviews(
                     'lang': lang,
                     'review_size': review_size,
                     'sort_type': sort_type,
-                    'score': score,
+                    'rating': rating,
                     'token': token
                 }
             }
