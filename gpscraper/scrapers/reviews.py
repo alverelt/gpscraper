@@ -23,8 +23,7 @@ def reviews(
     review_size=100, 
     sort_type=forms.SortType.MOST_RELEVANT, 
     rating=0, 
-    lang='us',
-    *args, **kwargs):
+    lang='us'):
     """Generator, gets all reviews.
 
     Parameters
@@ -96,13 +95,13 @@ def reviews(
         logging.error('Unexpected end.')
 
 
-def _do_post_next_reviews(next_page_form, lang, *args, **kwargs):
+def _do_post_next_reviews(form_next_page, lang):
     url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
     params = {
         'hl': lang
     }
     return requests.post(
-        url, params=params, headers=headers.POST, data=next_page_form
+        url, params=params, headers=headers.POST, data=form_next_page
     )
 
 

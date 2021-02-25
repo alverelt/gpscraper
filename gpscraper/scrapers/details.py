@@ -31,7 +31,7 @@ def details(app_id, lang='us'):
         return None
 
 
-def _do_get_details(app_id, lang, *args, **kwargs):
+def _do_get_details(app_id, lang):
     url = 'https://play.google.com/store/apps/details'
     params = {
         'id': app_id, 'hl': lang,
