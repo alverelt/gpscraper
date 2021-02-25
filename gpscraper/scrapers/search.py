@@ -17,8 +17,7 @@ def search(
     query, 
     token=None, 
     pagination_delay=1, 
-    lang='us', 
-    *args, **kwargs):
+    lang='us'):
     """List every content according on the query.
 
     Parameters
@@ -49,8 +48,14 @@ def search(
                 )
             else:
                 form_next_page = forms.search_next_page(token, strange_data)
+                response = _do_post_next_search(form_next_page, lang)
+                results = parsers.search_next_page(
+                    response.text
+                )
+                token = None
+                strange_data = None
 
-            return {
+            yield {
                 'search': results,
                 'token': token,
                 'strange_data': strange_data
@@ -68,3 +73,12 @@ def _do_get_search(query, lang):
     params = {'q': query, 'hl': lang, 'gl': 'US'}
 
     return requests.get(url, params=params, headers=headers.GET)
+
+
+def _do_post_next_search(form_next_page, lang):
+    url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
+    params = {'hl': lang, 'gl': 'US'}
+
+    return requests.post(
+        url, params=params, headers=headers.POST, data=form_next_page
+    )

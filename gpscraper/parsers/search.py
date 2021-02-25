@@ -9,7 +9,7 @@ import re
 
 def search(data):
     results = []
-    for d in data[0][1][0][0][0]:
+    for d in data:
         try:
             app = {}
 
@@ -37,7 +37,7 @@ def search_first_page(response):
         soup = BeautifulSoup(response, 'html.parser')
     
     data = get_data('lGYRle', response, soup)
-    results = search(data)
+    results = search(data[0][1][0][0][0])
 
     token = list_get(data, [0, 1, 0, 0, 7, 1])
 
@@ -46,3 +46,17 @@ def search_first_page(response):
     strange_data = regex.search(response).group(1)
 
     return results, token, strange_data
+
+
+def search_next_page(response):
+    response = response.replace('\\n', '').replace('\n', '')
+
+    regex = re.compile(r'\[\["wrb.fr')
+    init = regex.search(response).start()
+
+    data = json.loads(response[init:])
+    data = json.loads(data[0][2])
+
+    results = search(data[0][0][0])
+
+    return results
