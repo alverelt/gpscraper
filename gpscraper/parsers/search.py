@@ -4,8 +4,14 @@ from .general import get_data
 from ..utils import list_get
 
 import json
+import logging
 import re
 
+
+logging.basicConfig(
+    format='%(asctime)s - %(levelname)s - %(message)s', 
+    level=logging.INFO
+)
 
 def search(data):
     results = []
@@ -54,8 +60,12 @@ def search_next_page(response):
     regex = re.compile(r'\[\["wrb.fr')
     init = regex.search(response).start()
 
-    data = json.loads(response[init:])
-    data = json.loads(data[0][2])
+    try:
+        data = json.loads(response[init:])
+        data = json.loads(data[0][2])
+    except (json.JSONDecodeError, TypeError):
+        logging.error('Could not parse next searches.')
+        return [], None
 
     results = search(data[0][0][0])
 

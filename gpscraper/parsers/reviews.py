@@ -4,7 +4,14 @@ from .general import get_data
 from ..utils import list_get
 
 import json
+import logging
 import re
+
+
+logging.basicConfig(
+    format='%(asctime)s - %(levelname)s - %(message)s', 
+    level=logging.INFO
+)
 
 
 def reviews(data):
@@ -51,8 +58,13 @@ def reviews_next_page(response):
     regex = re.compile(r"\[")
     init = regex.search(response).start()
 
-    data = json.loads(response[init:])
-    data = json.loads(data[0][2])
+    try:
+        data = json.loads(response[init:])
+        data = json.loads(data[0][2])
+    except (json.JSONDecodeError, TypeError):
+        logging.error('Could not parse next reviews.')
+        return [], None
+
     results = reviews(data)
 
     next_page_token = list_get(data, [1, 1])
@@ -61,7 +73,12 @@ def reviews_next_page(response):
 
 def review_history(response):
     text = re.search(r'"UsvDTd","(.*)\\n",null,null', response).group(1)
-    data = json.loads(text.replace('\\n', '').replace('\\"', '"'))
+
+    try:
+        data = json.loads(text.replace('\\n', '').replace('\\"', '"'))
+    except (json.JSONDecodeError, TypeError):
+        logging.error('Could not parse review_history.')
+        return [] 
 
     results = []
 
