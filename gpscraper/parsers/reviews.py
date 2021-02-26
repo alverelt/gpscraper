@@ -50,9 +50,9 @@ def reviews_first_page(response):
     data = get_data('UsvDTd', response, soup)
     results = reviews(data)
 
-    next_page_token = list_get(data, [1, 1])
+    token = list_get(data, [1, 1])
 
-    return results, next_page_token
+    return results, token
 
 def reviews_next_page(response):
     regex = re.compile(r"\[")
@@ -67,9 +67,9 @@ def reviews_next_page(response):
 
     results = reviews(data)
 
-    next_page_token = list_get(data, [1, 1])
+    token = list_get(data, [1, 1])
 
-    return results, next_page_token
+    return results, token
 
 def review_history(response):
     text = re.search(r'"UsvDTd","(.*)\\n",null,null', response).group(1)

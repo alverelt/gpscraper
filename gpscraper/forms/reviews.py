@@ -9,11 +9,11 @@ class SortType(Enum):
     RATING = 3
 
 
-def reviews_next_page(app_id, next_page_token, review_size, sort_type, rating):
-    if not next_page_token:
-        next_page_token = json.dumps(None)
+def reviews_next_page(app_id, token, review_size, sort_type, rating):
+    if not token:
+        token = json.dumps(None)
     else:
-        next_page_token = f'"{next_page_token}"'
+        token = f'"{token}"'
 
     sort_type = json.dumps(sort_type.value)
 
@@ -25,7 +25,7 @@ def reviews_next_page(app_id, next_page_token, review_size, sort_type, rating):
 
     long_data = (
         f'[null,null,[2,{sort_type},[{review_size},null,'
-        f'{next_page_token}],null,{rating}],["{app_id}",7]]'
+        f'{token}],null,{rating}],["{app_id}",7]]'
     )
 
     form = {
