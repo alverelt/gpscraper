@@ -43,13 +43,13 @@ def search_first_page(response):
 
     response = response.replace('\\n', '')
     regex = re.compile(r'"QEwZ9c":"%\.@\.(.*)\]","QrtxK"')
-    strange_data = regex.search(response).group(1)
+    unknown_list_1 = regex.search(response).group(1)
 
-    return results, token, strange_data
+    return results, token, unknown_list_1
 
 
 def search_next_page(response):
-    response = response.replace('\\n', '').replace('\n', '')
+    response = re.sub(r'(\\\\n|\\n)', '', response)
 
     regex = re.compile(r'\[\["wrb.fr')
     init = regex.search(response).start()
@@ -59,4 +59,6 @@ def search_next_page(response):
 
     results = search(data[0][0][0])
 
-    return results
+    token = list_get(data, [0, 0, 7, 1])
+
+    return results, token

@@ -15,7 +15,8 @@ logging.basicConfig(
 
 def search(
     query, 
-    token=None, 
+    token=None,
+    unknown_list_1=None,
     pagination_delay=1, 
     lang='us'):
     """List every content according on the query.
@@ -24,6 +25,10 @@ def search(
     ----------
     query : str
         Search query.
+    token : str
+        For continuation of search, you must provide this token.
+    unknown_list_1 : str
+        For continuation of search, you must provide this unknown_list_1.
     lang : str
         Language of results.
     
@@ -43,22 +48,22 @@ def search(
         while token:
             if token == -1:
                 response = _do_get_search(query, lang)
-                results, token, strange_data =  parsers.search_first_page(
+                results, token, unknown_list_1 =  parsers.search_first_page(
                     response.text
                 )
             else:
-                form_next_page = forms.search_next_page(token, strange_data)
+                form_next_page = forms.search_next_page(token, unknown_list_1)
                 response = _do_post_next_search(form_next_page, lang)
-                results = parsers.search_next_page(
+                results, token = parsers.search_next_page(
                     response.text
                 )
-                token = None
-                strange_data = None
 
             yield {
                 'search': results,
-                'token': token,
-                'strange_data': strange_data
+                'continue': {
+                    'token': token,
+                    'unknown_list_1': unknown_list_1
+                }
             }
 
     except requests.exceptions.RequestException as e:
