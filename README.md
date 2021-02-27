@@ -1,8 +1,10 @@
 # gpscraper
 
-Welcome to this Google Play scraper.
+Welcome to this Google Play scraper. There are currently 4 available methods: `search`, `details`, `reviews` and `review_history`.
 
-- With the `search` generator method you will be able to gather information from all results according to your input query.
+- With the `search` generator method you will be able to gather information from all results according to your input query. 
+
+> You will get a list of searches for each pagination.
 
 **Example**
 ```python
@@ -87,4 +89,49 @@ And get something like this
  'rating_value': ['4.7', 4.650081],
  'histogram': {'1': 344, '2': 285, '3': 767, '4': 2596, '5': 14193},
  'rating_count': 18187}
+```
+
+- With the `reviews` generator method you will get all reviews from a single application.
+
+> You will get a list of reviews for each pagination.
+
+**Example**
+```python
+import gpscraper as gp
+
+reviews = [r for r in gp.reviews('com.github.android')]
+```
+
+And get something like this
+```python
+[{'reviews': [{'id': 'gp:AOqpTOFrUA0XEWFM-TFx_SUuhIAI3pJOxO67lZ1e5_0RuoBoSB3UZmRG0IPkx_TOg35Tyr7KHNEp5fmjAeSff7U',
+   'rating': 5,
+   'name': 'Seth Clemans',
+   'comment': 'Great job GitHub! Very handy app all though you can do more with the desktop version.',
+   'reply': None,
+   'app_version': '1.3.14',
+   'epoch': 1608858370,
+   'datetime': '2020-12-24 21:06:10',
+   'profile_pic': 'https://play-lh.googleusercontent.com/a-/AOh14GjwEdGbZRjKReautC8Mcub4vmJ-Wo7FxNkAIanRHw',
+   'background_pic': 'https://play-lh.googleusercontent.com/Yq7oyNIvAAkuc69fG51sbAQS4otJxbObbt3xdr8tXxXyUdq4tVGtfgeKuptveGdP1srxaHVrNPzOYcfaEQ',
+   'likes': 0},
+  {'id': 'gp:AOqpTOHJ5XsIP4YtJgaSHnqlNMYqNaFwjWMZ1L-o7hvqmfUTPgmOddNa6VniLU_AsF2CazJyBWSnYM7jY_uJHgk',
+   'rating': 5,
+   'name': 'Timothy Aldrich',
+   'comment': 'really nice interface with fast access to the features I need on mobile',
+   'reply': None,
+   'app_version': '1.4.0',
+   'epoch': 1611289171,
+   'datetime': '2021-01-22 00:19:31',
+   'profile_pic': 'https://play-lh.googleusercontent.com/a-/AOh14GhXOTvKYQyeQplvvVBecdSVhL2V7j5_xQbBfawwvA',
+   'background_pic': 'https://play-lh.googleusercontent.com/Yq7oyNIvAAkuc69fG51sbAQS4otJxbObbt3xdr8tXxXyUdq4tVGtfgeKuptveGdP1srxaHVrNPzOYcfaEQ',
+   'likes': 0}]
+  {...}],
+  'next': {'app_id': 'com.github.android',
+  'token': 'CsUBCsIBKpsBCm73O5rM0f____9nYWlhOjAwMDAwMGUzMjYyNGZhNzk6MT...',
+  'pagination_delay': 1,
+  'review_size': 100,
+  'sort_type': <SortType.MOST_RELEVANT: None>,
+  'rating': 0,
+  'lang': 'en'}}]
 ```
