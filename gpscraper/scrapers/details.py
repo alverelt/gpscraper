@@ -1,3 +1,4 @@
+from .general import TIMEOUT
 from .. import headers
 from .. import parsers
 from .. import validators
@@ -37,7 +38,6 @@ def _do_get_details(app_id, lang):
         'id': app_id, 'hl': lang,
         'gl': 'US', 'showAllReviews': True
     }
-
     return requests.get(
-        url, params=params, headers=headers.GET
+        url, params=params, headers=headers.GET, timeout=TIMEOUT
     )

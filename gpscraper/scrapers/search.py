@@ -1,3 +1,4 @@
+from .general import TIMEOUT
 from .. import forms
 from .. import headers
 from .. import parsers
@@ -83,15 +84,29 @@ def search(
 
 def _do_get_search(query, lang):
     url = 'https://play.google.com/store/search'
-    params = {'q': query, 'hl': lang, 'gl': 'US'}
-
-    return requests.get(url, params=params, headers=headers.GET)
+    params = {
+        'q': query, 
+        'hl': lang, 
+        'gl': 'US'
+    }
+    return requests.get(
+        url, 
+        params=params, 
+        headers=headers.GET, 
+        timeout=TIMEOUT
+    )
 
 
 def _do_post_next_search(form_next_page, lang):
     url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
-    params = {'hl': lang, 'gl': 'US'}
-
+    params = {
+        'hl': lang, 
+        'gl': 'US'
+    }
     return requests.post(
-        url, params=params, headers=headers.POST, data=form_next_page
+        url, 
+        params=params, 
+        headers=headers.POST, 
+        data=form_next_page,
+        timeout=TIMEOUT
     )

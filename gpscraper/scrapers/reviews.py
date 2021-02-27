@@ -1,4 +1,5 @@
 from .details import _do_get_details
+from .general import TIMEOUT
 from .. import forms
 from .. import headers
 from .. import parsers
@@ -102,5 +103,9 @@ def _do_post_next_reviews(form_next_page, lang):
         'hl': lang
     }
     return requests.post(
-        url, params=params, headers=headers.POST, data=form_next_page
+        url, 
+        params=params, 
+        headers=headers.POST, 
+        data=form_next_page,
+        timeout=TIMEOUT
     )

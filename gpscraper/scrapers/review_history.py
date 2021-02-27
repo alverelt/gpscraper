@@ -1,3 +1,4 @@
+from .general import TIMEOUT
 from .. import forms
 from .. import headers
 from .. import parsers
@@ -36,5 +37,5 @@ def review_history(app_id, review_id):
 
 def _do_get_review_history(form):
     url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
-
-    return requests.post(url, headers=headers.POST, data=form)
+    
+    return requests.post(url, headers=headers.POST, data=form, timeout=TIMEOUT)
