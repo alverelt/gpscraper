@@ -20,7 +20,7 @@ def search(
     token=None,
     unknown_1=None,
     pagination_delay=1, 
-    lang='us'):
+    lang='en'):
     """List every content according on the query.
 
     Parameters

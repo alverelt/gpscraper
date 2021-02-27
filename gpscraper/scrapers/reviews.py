@@ -24,7 +24,7 @@ def reviews(
     review_size=100, 
     sort_type=forms.SortType.MOST_RELEVANT, 
     rating=0, 
-    lang='us'):
+    lang='en'):
     """Generator, gets all reviews.
 
     Parameters

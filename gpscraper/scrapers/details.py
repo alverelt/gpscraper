@@ -6,7 +6,7 @@ from .. import validators
 import requests
 
 
-def details(app_id, lang='us'):
+def details(app_id, lang='en'):
     """Useful info of the app.
 
     Parameters
