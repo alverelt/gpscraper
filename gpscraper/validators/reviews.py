@@ -1,17 +1,4 @@
-from .exceptions import InputTypeError, InputValueError
-from .forms import SortType
-
-
-def details(app_id, lang):
-    if not isinstance(app_id, str):
-        raise TypeError("'app_id' must be of type str.")
-    if not id:
-        raise ValueError("'app_id' cannot be empty.")
-
-    if not isinstance(lang, str):
-        raise TypeError("'lang' must be of type str.")
-    if not lang:
-        raise ValueError("'lang' cannot be empty.")
+from ..forms import SortType
 
 
 def reviews(
@@ -44,30 +31,6 @@ def reviews(
         raise TypeError("'rating' must be of type int.")
     if not (0 <= rating <= 5):
         raise ValueError("'rating' must be between 0 and 5.")
-
-    if not isinstance(lang, str):
-        raise TypeError("'lang' must be of type str.")
-    if not lang:
-        raise ValueError("'lang' cannot be empty.")
-
-
-def review_history(app_id, review_id):
-    if not isinstance(app_id, str):
-        raise TypeError("'app_id' must be of type str.")
-    if not app_id:
-        raise ValueError("'app_id' cannot be empty.")
-
-    if not isinstance(review_id, str):
-        raise TypeError("'review_id' must be of type str.")
-    if not review_id:
-        raise ValueError("'review_id' cannot be empty.")
-
-
-def search(query, lang):
-    if not isinstance(query, str):
-        raise TypeError('query must be of type str.')
-    if not query:
-        raise ValueError('query cannot be empty.')
 
     if not isinstance(lang, str):
         raise TypeError("'lang' must be of type str.")
