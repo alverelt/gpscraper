@@ -1,9 +1,9 @@
 import json
 
 
-def search_next_page(token, strange_data):
+def search_next_page(token, unknown_1):
     long_data = (
-        f'[[null,[{strange_data}],null,"{token}"]]'
+        f'[[null,[{unknown_1}],null,"{token}"]]'
     )
 
     form = {
