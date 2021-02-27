@@ -15,10 +15,11 @@ class _Details:
             self.soup = BeautifulSoup(response, 'html.parser')
 
     def parse(self):
-        self.jLZZ2e = get_data('jLZZ2e', self.response, self.soup)[:1]
-
+        self.jLZZ2e = get_data('jLZZ2e', self.response, self.soup)
+        self.jLZZ2e = list_get(self.jLZZ2e, [0], [])
         self.IoIWBc = get_data('IoIWBc', self.response, self.soup)
-        self.d5UeYe = get_data('d5UeYe', self.response, self.soup)[:1]
+        self.d5UeYe = get_data('d5UeYe', self.response, self.soup)
+        self.d5UeYe = list_get(self.d5UeYe, [0], [])
         self.MLWfjd = get_data('MLWfjd', self.response, self.soup)
 
         return {

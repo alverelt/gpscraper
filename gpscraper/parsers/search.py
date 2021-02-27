@@ -49,9 +49,9 @@ def search_first_page(response):
 
     response = response.replace('\\n', '')
     regex = re.compile(r'"QEwZ9c":"%\.@\.(.*)\]","QrtxK"')
-    unknown_list_1 = regex.search(response).group(1)
+    unknown_1 = regex.search(response).group(1)
 
-    return results, token, unknown_list_1
+    return results, token, unknown_1
 
 
 def search_next_page(response):
