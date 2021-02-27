@@ -75,13 +75,14 @@ def reviews(
             
             yield {
                 'reviews': results,
-                'continue': {
+                'next': {
                     'app_id': app_id,
-                    'lang': lang,
+                    'token': token,
+                    'pagination_delay': pagination_delay,
                     'review_size': review_size,
                     'sort_type': sort_type,
                     'rating': rating,
-                    'token': token
+                    'lang': lang,
                 }
             }
             
@@ -103,37 +104,3 @@ def _do_post_next_reviews(form_next_page, lang):
     return requests.post(
         url, params=params, headers=headers.POST, data=form_next_page
     )
-
-
-def review_history(app_id, review_id):
-    """Gets a review history (all modifications).
-
-    Parameters
-    ----------
-    app_id : str
-        App id/Package name.
-    review_id : int
-        Review id, it is retrieve from reviews when you use the
-        reviews method.
-    
-    Yields
-    ------
-    list of dict | None
-
-    Raises
-    ------
-    InputTypeError | InputValueError        
-    """
-    validators.review_history(app_id, review_id)
-    try:
-        form = forms.review_history(app_id, review_id)
-        response = _do_get_review_history(form)
-        return parsers.review_history(response.text)
-    except:
-        return None
-
-
-def _do_get_review_history(form):
-    url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
-
-    return requests.post(url, headers=headers.POST, data=form)

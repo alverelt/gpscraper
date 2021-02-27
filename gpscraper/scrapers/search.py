@@ -5,6 +5,7 @@ from .. import validators
 
 import logging
 import requests
+import time
 
 
 logging.basicConfig(
@@ -16,7 +17,7 @@ logging.basicConfig(
 def search(
     query, 
     token=None,
-    unknown_list_1=None,
+    unknown_1=None,
     pagination_delay=1, 
     lang='us'):
     """List every content according on the query.
@@ -27,8 +28,10 @@ def search(
         Search query.
     token : str
         For continuation of search, you must provide this token.
-    unknown_list_1 : str
-        For continuation of search, you must provide this unknown_list_1.
+    unknown_1 : str
+        For continuation of search, you must provide this unknown_1.
+    pagination_delay : int | float
+        Time between each scrape.
     lang : str
         Language of results.
     
@@ -41,18 +44,18 @@ def search(
     InputTypeError | InputValueError
     
     """
-    validators.search(query, lang)
+    validators.search(query, token, unknown_1, pagination_delay, lang)
 
     try:
         token = token or -1
         while token:
             if token == -1:
                 response = _do_get_search(query, lang)
-                results, token, unknown_list_1 =  parsers.search_first_page(
+                results, token, unknown_1 =  parsers.search_first_page(
                     response.text
                 )
             else:
-                form_next_page = forms.search_next_page(token, unknown_list_1)
+                form_next_page = forms.search_next_page(token, unknown_1)
                 response = _do_post_next_search(form_next_page, lang)
                 results, token = parsers.search_next_page(
                     response.text
@@ -60,11 +63,16 @@ def search(
 
             yield {
                 'search': results,
-                'continue': {
+                'next': {
+                    'query': query,
                     'token': token,
-                    'unknown_list_1': unknown_list_1
+                    'unknown_1': unknown_1,
+                    'pagination_delay': pagination_delay,
+                    'lang': lang,
                 }
             }
+
+            time.sleep(pagination_delay)
 
     except requests.exceptions.RequestException as e:
         logging.exception(e)

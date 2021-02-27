@@ -1,0 +1,40 @@
+from .. import forms
+from .. import headers
+from .. import parsers
+from .. import validators
+
+import requests
+
+
+def review_history(app_id, review_id):
+    """Gets a review history (all modifications).
+
+    Parameters
+    ----------
+    app_id : str
+        App id/Package name.
+    review_id : int
+        Review id, it is retrieve from reviews when you use the
+        reviews method.
+    
+    Yields
+    ------
+    list of dict | None
+
+    Raises
+    ------
+    InputTypeError | InputValueError        
+    """
+    validators.review_history(app_id, review_id)
+    try:
+        form = forms.review_history(app_id, review_id)
+        response = _do_get_review_history(form)
+        return parsers.review_history(response.text)
+    except:
+        return None
+
+
+def _do_get_review_history(form):
+    url = 'https://play.google.com/_/PlayStoreUi/data/batchexecute'
+
+    return requests.post(url, headers=headers.POST, data=form)
