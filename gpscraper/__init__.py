@@ -1,4 +1,4 @@
-from .forms import SortType
+from .forms import SortBy
 from .scrapers import (
     details, 
     reviews, 

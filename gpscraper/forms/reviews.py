@@ -3,19 +3,19 @@ from enum import Enum
 import json
 
 
-class SortType(Enum):
+class SortBy(Enum):
     MOST_RELEVANT = None
     NEWEST = 2
     RATING = 3
 
 
-def reviews_next_page(app_id, token, review_size, sort_type, rating):
+def reviews_next_page(app_id, token, review_size, sort_by, rating):
     if not token:
         token = json.dumps(None)
     else:
         token = f'"{token}"'
 
-    sort_type = json.dumps(sort_type.value)
+    sort_by = json.dumps(sort_by.value)
 
     if 1 <= rating <= 5:
         rating = f'[null,{rating}]'
@@ -24,7 +24,7 @@ def reviews_next_page(app_id, token, review_size, sort_type, rating):
         rating = '[]'
 
     long_data = (
-        f'[null,null,[2,{sort_type},[{review_size},null,'
+        f'[null,null,[2,{sort_by},[{review_size},null,'
         f'{token}],null,{rating}],["{app_id}",7]]'
     )
 

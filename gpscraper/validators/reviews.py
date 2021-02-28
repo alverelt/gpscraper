@@ -1,9 +1,9 @@
-from ..forms import SortType
+from ..forms import SortBy
 
 
 def reviews(
         app_id, token, pagination_delay, review_size, 
-        sort_type, rating, lang):
+        sort_by, rating, lang):
     if not isinstance(app_id, str):
         raise TypeError("'app_id' must be of type str.")
     if not app_id:
@@ -24,8 +24,8 @@ def reviews(
     if review_size < 1:
         raise ValueError("'review_size' must be greater than 0.")
 
-    if sort_type not in SortType:
-        raise ValueError("'sort_type' value is not recognized.")
+    if sort_by not in SortBy:
+        raise ValueError("'sort_by' value is not recognized.")
 
     if not isinstance(rating, int):
         raise TypeError("'rating' must be of type int.")

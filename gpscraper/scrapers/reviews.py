@@ -22,7 +22,7 @@ def reviews(
     token=None, 
     pagination_delay=1, 
     review_size=100, 
-    sort_type=forms.SortType.MOST_RELEVANT, 
+    sort_by=forms.SortBy.MOST_RELEVANT, 
     rating=0, 
     lang='en'):
     """Generator, gets all reviews.
@@ -37,8 +37,8 @@ def reviews(
         Time between each scrape.
     review_size : int
         Reviews by page, except page 1.
-    sort_type : SortType
-        Sorting type. Check SortType class.
+    sort_by : SortBy
+        Sorting type. Check SortBy class.
     rating : int
         Shows reviews by rating. Zero (0) means all ratings. 
     lang : str
@@ -54,7 +54,7 @@ def reviews(
     
     """
     validators.reviews(
-        app_id, token, pagination_delay, review_size, sort_type, 
+        app_id, token, pagination_delay, review_size, sort_by, 
         rating, lang
     )
     
@@ -62,14 +62,14 @@ def reviews(
         token = token or -1
         while token:
             # The only time we do a GET request to first page is
-            # when sort_type and rating are default values.
-            if token == -1 and not sort_type and not rating:
+            # when sort_by and rating are default values.
+            if token == -1 and not sort_by and not rating:
                 response = _do_get_details(app_id, lang)
                 results, token = parsers.reviews_first_page(response.text)
             else:
                 form_next_page = forms.reviews_next_page(
                     app_id, None if token == -1 else token, 
-                    review_size, sort_type, rating
+                    review_size, sort_by, rating
                 )
                 response = _do_post_next_reviews(form_next_page, lang)
                 results, token = parsers.reviews_next_page(response.text)
@@ -81,7 +81,7 @@ def reviews(
                     'token': token,
                     'pagination_delay': pagination_delay,
                     'review_size': review_size,
-                    'sort_type': sort_type,
+                    'sort_by': sort_by,
                     'rating': rating,
                     'lang': lang,
                 }
