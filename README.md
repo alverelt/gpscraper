@@ -221,6 +221,10 @@ And get something like this
 ```
 
 > You also get the `next` field to continue pagination in case you break the loop.
+```python
+for r in gp.search(**reviews[-1]['next']):
+    reviews.append(r)
+```
 
 ## App review history
 
