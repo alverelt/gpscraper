@@ -44,8 +44,8 @@ def reviews(
         Time between each scrape.
     review_size : int
         Reviews by page, except page 1.
-    sort_by : SortBy
-        Sorting type. Check SortBy class.
+    sort_by : str
+        Sorting option, available 'most_relevant', 'newest', 'rating'.
     rating : int
         Shows reviews by rating. Zero (0) means all ratings. 
     lang : str
