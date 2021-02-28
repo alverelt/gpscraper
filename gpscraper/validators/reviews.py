@@ -1,4 +1,4 @@
-from ..forms import SortBy
+from ..scrapers.reviews import SORT_TYPE
 
 
 def reviews(
@@ -24,8 +24,9 @@ def reviews(
     if review_size < 1:
         raise ValueError("'review_size' must be greater than 0.")
 
-    if sort_by not in SortBy:
-        raise ValueError("'sort_by' value is not recognized.")
+    if sort_by not in SORT_TYPE:
+        allowed = list(SORT_TYPE.keys())
+        raise ValueError(f"'sort_by' values allowed {allowed}.")
 
     if not isinstance(rating, int):
         raise TypeError("'rating' must be of type int.")

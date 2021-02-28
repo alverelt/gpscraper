@@ -1,4 +1,4 @@
-from .details import _do_get_details
+from . import details
 from .general import TIMEOUT
 from .. import forms
 from .. import headers
@@ -17,12 +17,19 @@ logging.basicConfig(
 )
 
 
+SORT_TYPE = {
+    'most_relevant': None,
+    'newest': 2,
+    'rating': 3
+}
+
+
 def reviews(
     app_id, 
     token=None, 
     pagination_delay=1, 
     review_size=100, 
-    sort_by=forms.SortBy.MOST_RELEVANT, 
+    sort_by='most_relevant', 
     rating=0, 
     lang='en'):
     """Generator, gets all reviews.
@@ -64,12 +71,12 @@ def reviews(
             # The only time we do a GET request to first page is
             # when sort_by and rating are default values.
             if token == -1 and not sort_by and not rating:
-                response = _do_get_details(app_id, lang)
+                response = details._do_get_details(app_id, lang)
                 results, token = parsers.reviews_first_page(response.text)
             else:
                 form_next_page = forms.reviews_next_page(
                     app_id, None if token == -1 else token, 
-                    review_size, sort_by, rating
+                    review_size, SORT_TYPE[sort_by], rating
                 )
                 response = _do_post_next_reviews(form_next_page, lang)
                 results, token = parsers.reviews_next_page(response.text)
