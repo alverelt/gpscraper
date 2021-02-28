@@ -75,11 +75,10 @@ def search(
 
             time.sleep(pagination_delay)
 
-    except requests.exceptions.RequestException as e:
-        logging.exception(e)
-    except Exception as e:
-        logging.exception(e)
-        logging.error('Unexpected end.')
+    except requests.exceptions.RequestException:
+        logging.exception('Unexpected end.')
+    except Exception:
+        logging.exception('Unexpected end.')
 
 
 def _do_get_search(query, lang):

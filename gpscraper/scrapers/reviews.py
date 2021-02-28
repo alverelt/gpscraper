@@ -97,11 +97,10 @@ def reviews(
             time.sleep(pagination_delay)
     except GeneratorExit:
         return
-    except requests.exceptions.RequestException as e:
-        logging.exception(e)
-    except Exception as e:
-        logging.exception(e)
-        logging.error('Unexpected end.')
+    except requests.exceptions.RequestException:
+        logging.exception('Unexpected end.')
+    except Exception:
+        logging.exception('Unexpected end.')
 
 
 def _do_post_next_reviews(form_next_page, lang):

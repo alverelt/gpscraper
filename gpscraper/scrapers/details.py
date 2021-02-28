@@ -3,7 +3,14 @@ from .. import headers
 from .. import parsers
 from .. import validators
 
+import logging
 import requests
+
+
+logging.basicConfig(
+    format='%(asctime)s - %(levelname)s - %(message)s', 
+    level=logging.INFO
+)
 
 
 def details(app_id, lang='en'):
@@ -29,6 +36,7 @@ def details(app_id, lang='en'):
         response = _do_get_details(app_id, lang)
         return parsers.details(response.text)
     except:
+        logging.exception('Unexpected error.')
         return None
 
 

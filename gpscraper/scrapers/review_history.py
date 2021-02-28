@@ -4,7 +4,14 @@ from .. import headers
 from .. import parsers
 from .. import validators
 
+import logging
 import requests
+
+
+logging.basicConfig(
+    format='%(asctime)s - %(levelname)s - %(message)s', 
+    level=logging.INFO
+)
 
 
 def review_history(app_id, review_id):
@@ -32,6 +39,7 @@ def review_history(app_id, review_id):
         response = _do_get_review_history(form)
         return parsers.review_history(response.text)
     except:
+        logging.error('Unexpected error.')
         return None
 
 
