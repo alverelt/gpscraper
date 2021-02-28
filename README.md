@@ -62,7 +62,12 @@ You will get something like this
             "pagination_delay": 1,
             "lang": "en"
         }
-    }
+    },
+    {
+        "search": [...],
+        "next": {...}
+    },
+    {...}
 ]
 ```
 
@@ -216,7 +221,12 @@ And get something like this
             "rating": 0,
             "lang": "en"
         }
-    }
+    },
+    {
+        "reviews": [...],
+        "next": {...}
+    },
+    {...}
 ]
 ```
 
