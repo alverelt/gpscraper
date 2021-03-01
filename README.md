@@ -161,7 +161,7 @@ And get something like this
 
 ## App reviews
 
-You can also retrieve all reviews from an specific app. Use the function `reviews`, its parameters are:
+You can also retrieve all reviews from an specific app. Use the function generator `reviews`, its parameters are:
 - **app_id**: app id/package name.
 - **token (default=None)**: used for search contination.
 - **pagination_delay (default=1)**: time between each scrape pagination.
