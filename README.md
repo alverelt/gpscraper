@@ -1,9 +1,12 @@
 # gpscraper
 
-Welcome to this Google Play scraper which offers you the following:
-- [Search results](#Search results)
+Welome to this Google Play scraper which offers you the following:
+- [Search results](#search-results)
+- [App details](#app-details)
+- [App reviews](#app-reviews)
+- [App review history](#app-review-history)
 
-### Search results
+## Search results
 
 Use the function generator `search`, its parameters are:
 - **query**: the search query.
