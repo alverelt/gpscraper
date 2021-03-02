@@ -1,6 +1,6 @@
 # gpscraper
 
-Welome to this Google Play scraper which offers you the following:
+Welcome to this Google Play scraper which offers you the following:
 - [Search results](#search-results)
 - [App details](#app-details)
 - [App reviews](#app-reviews)
