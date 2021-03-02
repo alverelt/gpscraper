@@ -1,8 +1,9 @@
 # gpscraper
 
 Welcome to this Google Play scraper which offers you the following:
+- [Search results](#Search results)
 
-## Search results
+### Search results
 
 Use the function generator `search`, its parameters are:
 - **query**: the search query.
@@ -78,7 +79,7 @@ for s in gp.search(**searches[-1]['next']):
     searches.append(s)
 ```
 
-## App details
+### App details
 
 You will gather lots of information from an specific application. Use the function `details`, it parameters are:
 - **app_id**: app id/package name.
@@ -159,7 +160,7 @@ And get something like this
 }
 ```
 
-## App reviews
+### App reviews
 
 You can also retrieve all reviews from an specific app. Use the function generator `reviews`, its parameters are:
 - **app_id**: app id/package name.
@@ -236,7 +237,7 @@ for r in gp.search(**reviews[-1]['next']):
     reviews.append(r)
 ```
 
-## App review history
+### App review history
 
 You can get the history from an app's single review. Use the function `review_history`, its parameters are:
 - **app_id**: app id/package name.
