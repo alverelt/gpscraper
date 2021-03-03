@@ -11,7 +11,7 @@ setup(
     description="A nice Google Play scraper.",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/aelt/gpscraper",
+    url="https://github.com/alverelt/gpscraper",
     author="Alver Lopez",
     author_email="alverelt@gmail.com",
     license="MIT",
