@@ -57,7 +57,7 @@ def reviews(
 
     Raises
     ------
-    InputTypeError | InputValueError
+    TypeError | ValueError
     
     """
     validators.reviews(

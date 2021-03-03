@@ -31,7 +31,7 @@ def review_history(app_id, review_id):
 
     Raises
     ------
-    InputTypeError | InputValueError        
+    TypeError | ValueError        
     """
     validators.review_history(app_id, review_id)
     try:

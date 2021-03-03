@@ -29,7 +29,7 @@ def details(app_id, lang='en'):
 
     Raises
     ------
-    InputTypeError | InputValueError
+    TypeError | ValueError
     """
     validators.details(app_id, lang)
     try:

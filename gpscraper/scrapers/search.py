@@ -42,7 +42,7 @@ def search(
 
     Raises
     ------
-    InputTypeError | InputValueError
+    TypeError | ValueError
     
     """
     validators.search(query, token, unknown_1, pagination_delay, lang)
