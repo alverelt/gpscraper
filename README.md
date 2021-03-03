@@ -10,7 +10,7 @@ Welcome to this Google Play scraper which offers you the following:
 
 Use the function generator `search`, its parameters are:
 - **query**: the search query.
-- **token (default=None)**: used for search contination.
+- **token (default=None)**: used for search continuation.
 - **unknown_1 (default=None)**: used for search continuation.
 - **pagination_delay (default=1)**: time between each scrape pagination.
 - **lang (default="en")**: language of results.
