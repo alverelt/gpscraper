@@ -1,6 +1,13 @@
 # gpscraper
 
-Welcome to this Google Play scraper which offers you the following:
+Welcome to this Google Play scraper.
+
+## Installation
+```
+pip install gpscraper
+```
+
+## What does it offer?
 - [Search results](#search-results)
 - [App details](#app-details)
 - [App reviews](#app-reviews)
@@ -82,7 +89,7 @@ for s in gp.search(**searches[-1]['next']):
     searches.append(s)
 ```
 
-### App details
+## App details
 
 You will gather lots of information from an specific application. Use the function `details`, it parameters are:
 - **app_id**: app id/package name.
@@ -92,78 +99,83 @@ You will gather lots of information from an specific application. Use the functi
 ```python
 import gpscraper as gp
 
-details = gp.details('com.github.android')
+details = gp.details('com.mojang.minecraftpe')
 ```
 
 And get something like this
 ```python
 {
-    "title": "GitHub",
-    "description": "There's a lot you can do on G...",
+    "title": "Minecraft",
+    "description": "Explore infinite worlds and build everything from the simplest...",
     "screenshots": [
-        "https://play-lh.googleusercontent.com/_x8EKTss...",
-        "https://play-lh.googleusercontent.com/oJIO3RR...",
-        "https://play-lh.googleusercontent.com/UY_55o3qfR...",
-        "https://play-lh.googleusercontent.com/BP7LyjN7Z..."
+        "https://play-lh.googleusercontent.com/0-zBoTxVn5PJQtNNnovURx1JIbIytd7_H8f...",
+        "https://play-lh.googleusercontent.com/Cq6Sju3wrs8IvE7y0w1pGwjO1FNZchjIbXE...",
+        "https://play-lh.googleusercontent.com/_T5Onj0iaqQjYTf-PNVMXBVENNm5LpQLeMA...",
+        "https://play-lh.googleusercontent.com/0NS4VI__zHQ5ZG9sDNJF4C6uaccSgqUKV4T...",
+        "https://play-lh.googleusercontent.com/eM2N3BdyvKYVI8V4eOZQxHFx9DFc9r1s0mk...",
+        "https://play-lh.googleusercontent.com/GszvU00I5sSnujEL_zg4905MJuoBs4X57t5...",
+        "https://play-lh.googleusercontent.com/34W0sPkaT9YL1mKYfJklQHS9N7FXVsFaW_v...",
+        "https://play-lh.googleusercontent.com/8O1-J7YFRB1vtq4J73zkRXU-Zf7KWAXHdor..."
     ],
-    "icon": "https://play-lh.googleusercontent.com/PCpXdqvUWf...",
+    "icon": "https://play-lh.googleusercontent.com/VSwHQjcAttxsLE47RuS4PqpC4LT7lCo...",
     "additional_info": {
-        "offered_by": "GitHub",
+        "offered_by": "Mojang",
         "installs": [
-            "1,000,000+",
-            1000000,
-            1455151,
-            "1M+"
+            "10,000,000+",
+            10000000,
+            34477214,
+            "10M+"
         ],
         "interactive_elements": "Users Interact",
-        "in_app_products": None,
+        "in_app_products": "$0.99 - $49.99 per item",
         "content_rating": [
-            "Everyone"
+            "Everyone 10+",
+            "Fantasy Violence"
         ],
-        "updated": "February 17, 2021",
-        "app_size": "9.7M",
-        "current_version": "1.4.9",
-        "requires_android": "6.0 and up",
+        "updated": "December 11, 2020",
+        "app_size": "Varies with device",
+        "current_version": "1.16.201.01",
+        "requires_android": "Varies with device",
         "developer": {
-            "site": "https://github.com/mobile",
-            "mailto": "mobilefeedback+android@github.com",
-            "more_apps": "/store/apps/developer?id=GitHub",
-            "privacy_policy": "https://help.github.com/en/...",
-            "address": None
+            "site": "http://help.mojang.com",
+            "mailto": "help@minecraft.net",
+            "more_apps": "/store/apps/dev?id=4772240228547998649",
+            "privacy_policy": "https://privacy.microsoft.com/en-us/privacystatement",
+            "address": "Mojang\nMaria Skolgata 83\n118 53\nStockholm\nSweden"
         }
     },
-    "editors_choice": False,
-    "whats_new": "Introducing Sponsors! A new button in the...",
-    "category": "PRODUCTIVITY",
-    "released": "Feb 15, 2020",
+    "editors_choice": True,
+    "whats_new": "What&#39;s new in 1.16.201: Various bug fixes!",
+    "category": "GAME_ARCADE",
+    "released": "Aug 15, 2011",
     "esrb": {
-        "description": "Everyone",
-        "icon": "https://play-lh.googleusercontent.com/OBVqgRK7eer..."
+        "description": "Everyone 10+",
+        "icon": "https://play-lh.googleusercontent.com/bxs95MghtAOuZR_LPwVCUmUPYEv..."
     },
     "prices": {
         "normal": {
-            "raw": 0,
+            "raw": 7490000,
             "currency": "USD",
-            "formatted": ""
+            "formatted": "$7.49"
         },
         "offer": None
     },
     "rating_value": [
-        "4.7",
-        4.6537657
+        "4.5",
+        4.528572
     ],
     "histogram": {
-        "1": 343,
-        "2": 286,
-        "3": 754,
-        "4": 2577,
-        "5": 14288
+        "1": 262486,
+        "2": 72223,
+        "3": 140257,
+        "4": 312121,
+        "5": 3156782
     },
-    "rating_count": 18249
+    "rating_count": 3943871
 }
 ```
 
-### App reviews
+## App reviews
 
 You can also retrieve all reviews from an specific app. Use the function generator `reviews`, its parameters are:
 - **app_id**: app id/package name.
@@ -206,7 +218,7 @@ And get something like this
                 "rating": 4,
                 "name": "User 2",
                 "comment": "The app is very good! Has beautiful UI design an...",
-                "reply": None,
+                "reply": "We are glad you enjoy the hard work we ...",
                 "app_version": "1.4.4",
                 "epoch": 1613482474,
                 "datetime": "2021-02-16 09:34:34",
@@ -240,9 +252,9 @@ for r in gp.search(**reviews[-1]['next']):
     reviews.append(r)
 ```
 
-### App review history
+## App review history
 
-You can get the history from an app's single review. Use the function `review_history`, its parameters are:
+You can get app's single review history (all edits from that review). Use the function `review_history`, its parameters are:
 - **app_id**: app id/package name.
 - **review_id**: review id.
 
@@ -262,11 +274,27 @@ And get something like this
         "profile_pic": "https://play-lh.googleusercontent.com/a-/AOh14GhXO...",
         "background_pic": "https://play-lh.googleusercontent.com/Yq7oyNI...",
         "rating": 5,
-        "comment": "really nice interface with fast access...",
+        "comment": "Really nice interface with fast access to all...",
         "epoch": 1611289171,
         "datetime": "2021-01-22 00:19:31",
+        "app_version": "1.4.0"
+    },
+    {
+        "id": "gp:AOqpTOHJ5XsIP4YtJgaSHnqlNMYqNaFwjWMZ1L-o7hvqmfUTPgmOdd...",
+        "name": "Foo Bar",
+        "profile_pic": "https://play-lh.googleusercontent.com/a-/AOh14GhXO...",
+        "background_pic": "https://play-lh.googleusercontent.com/Yq7oyNI...",
+        "rating": 5,
+        "comment": "nice interface.",
+        "epoch": 1611279171,
+        "datetime": "2021-01-21 21:32:51",
         "app_version": "1.4.0"
     },
     {...}
 ]
 ```
+
+## TODO
+- App permissions.
+
+[#top](#gpscraper)
