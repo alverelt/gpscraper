@@ -39,7 +39,7 @@ def review_history(app_id, review_id):
         response = _do_get_review_history(form)
         return parsers.review_history(response.text)
     except:
-        logging.error('Unexpected error.')
+        logging.exception('Unexpected error.')
         return None
 
 
