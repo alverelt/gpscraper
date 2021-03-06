@@ -23,16 +23,17 @@ def permissions(response):
 
     results = []
 
-    for d in data[0]:
-        perm = {}
-
-        perm['access'] = list_get(d, [0])
-        perm['icon'] = list_get(d, [1, 3, 2])
-        perm['details'] = [
-            list_get(detail, [1]) 
-            for detail in list_get(d, [2]) or []
-        ] 
-
-        results.append(perm)
+    # Must double loop because when an app has "Other" permissions, it appears
+    # in the second element in data.
+    for _data in data:
+        for d in _data:
+            results.append({
+                'access': list_get(d, [0]),
+                'icon': list_get(d, [1, 3, 2]),
+                'details': [
+                    list_get(detail, [1])
+                    for detail in list_get(d, [2], [])
+                ]
+            })
        
     return results
