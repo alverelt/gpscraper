@@ -1,4 +1,5 @@
 from .details import details
+from .permissions import permissions
 from .reviews import (
     reviews_first_page, reviews_next_page
 )
