@@ -12,6 +12,7 @@ pip install gpscraper
 - [App details](#app-details)
 - [App reviews](#app-reviews)
 - [App review history](#app-review-history)
+- [App permissions](#app-permissions)
 
 ## Search results
 
@@ -294,7 +295,71 @@ And get something like this
 ]
 ```
 
-## TODO
-- App permissions.
+## App permissions
+
+Every access available for the current application. Use the function `permissions`, its parameters are:
+- **app_id**: app id/package name.
+- **lang (default="en")**: app details language to be shown.
+
+**Example**
+```python
+import gpscraper as gp
+
+permissions = gp.permissions('com.t2kgames.civrev2')
+```
+
+And get something like this
+```python
+[
+    {
+        "access": "Identity",
+        "icon": "https://play-lh.googleusercontent.com/AUs-Fih7eEfuhp-4lYG...",
+        "details": [
+            "find accounts on the device"
+        ]
+    },
+    {
+        "access": "Contacts",
+        "icon": "https://play-lh.googleusercontent.com/c5fJsmDZCeHY1tZmeGX...",
+        "details": [
+            "find accounts on the device"
+        ]
+    },
+    {
+        "access": "Photos/Media/Files",
+        "icon": "https://play-lh.googleusercontent.com/pHtIujPWxciAZcfYSw...",
+        "details": [
+            "read the contents of your USB storage",
+            "modify or delete the contents of your USB storage"
+        ]
+    },
+    {
+        "access": "Storage",
+        "icon": "https://play-lh.googleusercontent.com/aWNKQedLTpw6u6yyMj...",
+        "details": [
+            "read the contents of your USB storage",
+            "modify or delete the contents of your USB storage"
+        ]
+    },
+    {
+        "access": "Wi-Fi connection information",
+        "icon": "https://play-lh.googleusercontent.com/U-_SG8pHTsqU_IyZTG...",
+        "details": [
+            "view Wi-Fi connections"
+        ]
+    },
+    {
+        "access": "Other",
+        "icon": "https://play-lh.googleusercontent.com/pkKXoPl5q7n8T0s7KR...",
+        "details": [
+            "view network connections",
+            "full network access",
+            "prevent device from sleeping",
+            "Google Play license check"
+        ]
+    }
+]
+```
+
 
 [#top](#gpscraper)
