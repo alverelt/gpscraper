@@ -24,7 +24,7 @@ def review_history(response):
 
     results = []
 
-    for d in data[0]:
+    for d in list_get(data, [0], []):
         history = {}
 
         history['id'] = list_get(d, [0])

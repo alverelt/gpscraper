@@ -43,7 +43,7 @@ def search_first_page(response):
         soup = BeautifulSoup(response, 'html.parser')
     
     data = get_data('lGYRle', response, soup)
-    results = search(data[0][1][0][0][0])
+    results = search(list_get(data, [0, 1, 0, 0, 0], []))
 
     token = list_get(data, [0, 1, 0, 0, 7, 1])
 
@@ -67,7 +67,7 @@ def search_next_page(response):
         logging.error('Could not parse next searches.')
         return [], None
 
-    results = search(data[0][0][0])
+    results = search(list_get(data, [0, 0, 0], []))
 
     token = list_get(data, [0, 0, 7, 1])
 

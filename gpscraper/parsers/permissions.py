@@ -23,9 +23,9 @@ def permissions(response):
 
     results = []
 
-    # Must double loop because when an app has "Other" permissions, it appears
-    # in the second element in data.
-    for _data in data:
+    # Must double loop because when an app has "Other" permissions, 
+    # it appears in the second element in data.
+    for _data in data[:2]:
         for d in _data:
             results.append({
                 'access': list_get(d, [0]),

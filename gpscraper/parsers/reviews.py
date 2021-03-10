@@ -16,7 +16,7 @@ logging.basicConfig(
 
 def reviews(data):
     results = []
-    for d in data[0]:
+    for d in list_get(data, [0], []):
         try:
             review = {}
 
