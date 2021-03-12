@@ -68,18 +68,12 @@ def reviews(
     try:
         token = token or -1
         while token:
-            # The only time we do a GET request to first page is
-            # when sort_by and rating are default values.
-            if token == -1 and not sort_by and not rating:
-                response = details._do_get_details(app_id, lang)
-                results, token = parsers.reviews_first_page(response.text)
-            else:
-                form_next_page = forms.reviews_next_page(
-                    app_id, None if token == -1 else token, 
-                    review_size, SORT_TYPE[sort_by], rating
-                )
-                response = _do_post_next_reviews(form_next_page, lang)
-                results, token = parsers.reviews_next_page(response.text)
+            form_next_page = forms.reviews_next_page(
+                app_id, None if token == -1 else token, 
+                review_size, SORT_TYPE[sort_by], rating
+            )
+            response = _do_post_next_reviews(form_next_page, lang)
+            results, token = parsers.reviews_next_page(response.text)
             
             yield {
                 'reviews': results,

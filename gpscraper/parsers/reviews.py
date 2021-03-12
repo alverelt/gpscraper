@@ -41,19 +41,6 @@ def reviews(data):
 
     return results
 
-def reviews_first_page(response):
-    try:
-        soup = BeautifulSoup(response, 'lxml')
-    except:
-        soup = BeautifulSoup(response, 'html.parser')
-
-    data = get_data('UsvDTd', response, soup)
-    results = reviews(data)
-
-    token = list_get(data, [1, 1])
-
-    return results, token
-
 def reviews_next_page(response):
     regex = re.compile(r"\[")
     init = regex.search(response).start()
