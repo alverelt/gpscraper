@@ -75,20 +75,21 @@ def reviews(
             response = _do_post_next_reviews(form_next_page, lang)
             results, token = parsers.reviews_next_page(response.text)
             
-            yield {
-                'reviews': results,
-                'next': {
-                    'app_id': app_id,
-                    'token': token,
-                    'pagination_delay': pagination_delay,
-                    'review_size': review_size,
-                    'sort_by': sort_by,
-                    'rating': rating,
-                    'lang': lang,
+            if results:
+                yield {
+                    'reviews': results,
+                    'next': {
+                        'app_id': app_id,
+                        'token': token,
+                        'pagination_delay': pagination_delay,
+                        'review_size': review_size,
+                        'sort_by': sort_by,
+                        'rating': rating,
+                        'lang': lang,
+                    }
                 }
-            }
             
-            time.sleep(pagination_delay)
+                time.sleep(pagination_delay)
     except GeneratorExit:
         return
     except requests.exceptions.RequestException:
