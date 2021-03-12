@@ -62,18 +62,19 @@ def search(
                     response.text
                 )
 
-            yield {
-                'search': results,
-                'next': {
-                    'query': query,
-                    'token': token,
-                    'unknown_1': unknown_1,
-                    'pagination_delay': pagination_delay,
-                    'lang': lang,
+            if results:
+                yield {
+                    'search': results,
+                    'next': {
+                        'query': query,
+                        'token': token,
+                        'unknown_1': unknown_1,
+                        'pagination_delay': pagination_delay,
+                        'lang': lang,
+                    }
                 }
-            }
 
-            time.sleep(pagination_delay)
+                time.sleep(pagination_delay)
 
     except requests.exceptions.RequestException:
         logging.exception('Unexpected end.')
