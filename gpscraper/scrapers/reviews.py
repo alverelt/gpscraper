@@ -68,33 +68,28 @@ def reviews(
     try:
         token = token or -1
         while token:
-            # The only time we do a GET request to first page is
-            # when sort_by and rating are default values.
-            if token == -1 and not sort_by and not rating:
-                response = details._do_get_details(app_id, lang)
-                results, token = parsers.reviews_first_page(response.text)
-            else:
-                form_next_page = forms.reviews_next_page(
-                    app_id, None if token == -1 else token, 
-                    review_size, SORT_TYPE[sort_by], rating
-                )
-                response = _do_post_next_reviews(form_next_page, lang)
-                results, token = parsers.reviews_next_page(response.text)
+            form_next_page = forms.reviews_next_page(
+                app_id, None if token == -1 else token, 
+                review_size, SORT_TYPE[sort_by], rating
+            )
+            response = _do_post_next_reviews(form_next_page, lang)
+            results, token = parsers.reviews_next_page(response.text)
             
-            yield {
-                'reviews': results,
-                'next': {
-                    'app_id': app_id,
-                    'token': token,
-                    'pagination_delay': pagination_delay,
-                    'review_size': review_size,
-                    'sort_by': sort_by,
-                    'rating': rating,
-                    'lang': lang,
+            if results:
+                yield {
+                    'reviews': results,
+                    'next': {
+                        'app_id': app_id,
+                        'token': token,
+                        'pagination_delay': pagination_delay,
+                        'review_size': review_size,
+                        'sort_by': sort_by,
+                        'rating': rating,
+                        'lang': lang,
+                    }
                 }
-            }
             
-            time.sleep(pagination_delay)
+                time.sleep(pagination_delay)
     except GeneratorExit:
         return
     except requests.exceptions.RequestException:
