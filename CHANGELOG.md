@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.2] 2021-03-13
+
+### Fixed
+- Gathering empty list when iterating in reviews and search functionalities. Now they won't =)
+- Minor fixes.
+
 ## [1.1.1] - 2021-03-09
 ### Fixed
 - Iteration errors.
