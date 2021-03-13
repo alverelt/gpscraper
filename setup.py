@@ -7,7 +7,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="gpscraper",
-    version="1.1.1",
+    version="1.1.2",
     description="A nice Google Play scraper.",
     long_description=README,
     long_description_content_type="text/markdown",
