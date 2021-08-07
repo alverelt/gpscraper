@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
-from .general import get_data
 from ..utils import list_get
 
 import json
@@ -12,6 +11,44 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s', 
     level=logging.INFO
 )
+
+def html_script(text):
+    regex = re.compile(
+        r"key:\s*'ds:3',\s*isError:\s*false\s*,\s*hash:\s*'6',\s*data:"
+        "(.*)"
+        r",\s*sideChannel:\s*\{\}\}\);"
+    )
+    found = regex.search(text)
+
+    try:
+        return json.loads(found.group(1))
+    except json.JSONDecodeError:
+        logging.error('Body content could not be parsed to dict.')
+        return []
+
+
+def get_ds(id, text):
+	return re.findall(r"'(ds:\d+)' : {id:'" + id + "'", text)[-1]
+
+
+def get_data(id, text, soup):
+    try:
+        ds = get_ds(id, text)
+    except IndexError:
+        logging.error(f'Not found {id}.')
+        return []
+
+    text = None   
+    for script in soup.find_all('script'):
+        if ds in script.decode_contents():
+            text = script.decode_contents()
+
+    if text is None:
+        logging.error(f'Not found {ds} as a key in any script tag.')
+        return []
+
+    return html_script(text)
+
 
 def search(data):
     results = []
@@ -41,7 +78,7 @@ def search_first_page(response):
         soup = BeautifulSoup(response, 'lxml')
     except:
         soup = BeautifulSoup(response, 'html.parser')
-    
+
     data = get_data('lGYRle', response, soup)
     results = search(list_get(data, [0, 1, 0, 0, 0], []))
 

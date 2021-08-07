@@ -1,4 +1,3 @@
-from .general import get_data
 from ..utils import list_get
 
 import json
@@ -13,7 +12,7 @@ logging.basicConfig(
 
 
 def permissions(response):
-    text = re.search(r'"xdSrCf","(.*)\\n",null,null', response).group(1)
+    text = re.search(r'"xdSrCf","(.*)",null,null,null', response).group(1)
 
     try:
         data = json.loads(text.replace('\\n', '').replace('\\"', '"'))
