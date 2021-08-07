@@ -1,5 +1,4 @@
 from datetime import datetime
-from .general import get_data
 from ..utils import list_get
 
 import json
@@ -14,7 +13,7 @@ logging.basicConfig(
 
 
 def review_history(response):
-    text = re.search(r'"UsvDTd","(.*)\\n",null,null', response).group(1)
+    text = re.search(r'"UsvDTd","(.*)",null,null,null', response).group(1)
 
     try:
         data = json.loads(text.replace('\\n', '').replace('\\"', '"'))
