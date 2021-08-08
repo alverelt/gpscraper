@@ -193,7 +193,7 @@ You can also retrieve all reviews from an specific app. Use the function generat
 ```python
 import gpscraper as gp
 
-reviews = [r for r in gp.reviews('com.github.android)]
+reviews = [r for r in gp.reviews('com.github.android')]
 ```
 
 And get something like this

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.3] 2021-08-07
+
+### Fixed
+- Search results.
+- App details.
+- App review history.
+- App permissions.
+
 ## [1.1.2] 2021-03-13
 
 ### Fixed

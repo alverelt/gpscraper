@@ -1,6 +1,53 @@
 from bs4 import BeautifulSoup
-from .general import get_data
 from ..utils import list_get
+
+import json
+import logging
+import re
+
+
+logging.basicConfig(
+    format='%(asctime)s - %(levelname)s - %(message)s', 
+    level=logging.INFO
+)
+
+def html_script(text):    
+    regex = (
+        r"key:\s*'ds:\d+',\s*isError:\s*false\s*,\s*hash:\s*'\d+',\s*data:"
+        "(.*)"
+        r",\s*sideChannel:\s*\{\}\}\);"
+    )
+    regex = re.compile(regex)
+    found = regex.search(text)
+
+    try:
+        return json.loads(found.group(1))
+    except json.JSONDecodeError:
+        logging.error('Body content could not be parsed to dict.')
+        return []
+
+
+def get_ds(id, text):
+	return re.findall(r"'(ds:\d+)' : {id:'" + id + "'", text)[-1]
+
+
+def get_data(id, text, soup):
+    try:
+        ds = get_ds(id, text)
+    except IndexError:
+        logging.error(f'Not found {id}.')
+        return []
+
+    text = None   
+    for script in soup.find_all('script'):
+        if ds in script.decode_contents():
+            text = script.decode_contents()
+
+    if text is None:
+        logging.error(f'Not found {ds} as a key in any script tag.')
+        return []
+
+    return html_script(text)
 
 
 def details(response):

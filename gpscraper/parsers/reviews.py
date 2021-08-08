@@ -1,6 +1,4 @@
-from bs4 import BeautifulSoup
 from datetime import datetime
-from .general import get_data
 from ..utils import list_get
 
 import json
